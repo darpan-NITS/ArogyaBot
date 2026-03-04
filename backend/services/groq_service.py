@@ -40,39 +40,40 @@ async def get_triage_response(
     conversation_history: list,
     language: str = "en"
 ) -> dict:
-    try:
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-        for msg in conversation_history[-6:]:
-            messages.append({
-                "role": msg["role"] if msg["role"] == "user" else "assistant",
-                "content": msg["text"]
-            })
-        messages.append({"role": "user", "content": message})
+    # Build messages array with history
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-        response = client.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=messages,
-            max_tokens=300,
-            temperature=0.4,
-        )
+    # Add conversation history (last 6 messages for context)
+    for msg in conversation_history[-6:]:
+        messages.append({
+            "role": msg["role"] if msg["role"] == "user" else "assistant",
+            "content": msg["text"]
+        })
 
-        reply = response.choices[0].message.content
-        severity = extract_severity(reply)
-        clean_reply = reply.replace(f"[SEVERITY: {severity}]", "").strip()
+    # Add current message
+    messages.append({"role": "user", "content": message})
 
-        return {
-            "reply": clean_reply,
-            "severity": severity,
-            "tokens_used": response.usage.total_tokens,
-        }
+    # Call Groq
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=messages,
+        max_tokens=300,
+        temperature=0.4,   # lower = more consistent medical responses
+    )
 
-    except Exception as e:
-        print(f"Groq error: {e}")
-        return {
-            "reply": "I'm having trouble connecting right now. Please try again in a moment.",
-            "severity": "mild",
-            "tokens_used": 0,
-        }
+    reply = response.choices[0].message.content
+
+    # Extract severity from response
+    severity = extract_severity(reply)
+
+    # Clean the severity tag from display text
+    clean_reply = reply.replace(f"[SEVERITY: {severity}]", "").strip()
+
+    return {
+        "reply": clean_reply,
+        "severity": severity,
+        "tokens_used": response.usage.total_tokens,
+    }
 
 
 def extract_severity(text: str) -> str:
