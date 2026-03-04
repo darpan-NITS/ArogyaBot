@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from db.database import sessions_collection
+from services.groq_service import get_triage_response, detect_language
 from datetime import datetime
-from typing import Optional
 
 router = APIRouter(prefix="/api", tags=["Chat"])
 
@@ -13,42 +13,53 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat(req: ChatRequest):
-    # Verify session exists
+    # Get session + history from DB
     session = await sessions_collection.find_one(
-        {"session_id": req.session_id}
+        {"session_id": req.session_id},
+        {"_id": 0}
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # Save user message to DB
+    # Auto-detect language if not set
+    detected_lang = detect_language(req.message)
+    language = detected_lang if detected_lang != "en" else req.language
+
+    # Get conversation history
+    history = session.get("messages", [])
+
+    # Call Groq
+    result = await get_triage_response(
+        message=req.message,
+        conversation_history=history,
+        language=language,
+    )
+
+    # Save both messages to DB
     user_message = {
         "role": "user",
         "text": req.message,
-        "language": req.language,
+        "language": language,
         "timestamp": datetime.utcnow().isoformat(),
     }
-
-    # Placeholder reply — Groq/Llama-3 connects on Day 5
-    bot_reply = (
-        "I've received your symptoms. Our AI triage engine "
-        "is being connected — come back on Day 5 for real responses!"
-    )
-
     bot_message = {
         "role": "bot",
-        "text": bot_reply,
+        "text": result["reply"],
+        "severity": result["severity"],
         "timestamp": datetime.utcnow().isoformat(),
-        "severity": "mild",
     }
 
-    # Append both messages to session
     await sessions_collection.update_one(
         {"session_id": req.session_id},
-        {"$push": {"messages": {"$each": [user_message, bot_message]}}}
+        {
+            "$push": {"messages": {"$each": [user_message, bot_message]}},
+            "$set": {"severity": result["severity"]}
+        }
     )
 
     return {
-        "reply": bot_reply,
-        "severity": "mild",
+        "reply": result["reply"],
+        "severity": result["severity"],
         "session_id": req.session_id,
+        "language": language,
     }
