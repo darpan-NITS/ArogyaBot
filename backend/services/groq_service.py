@@ -40,40 +40,39 @@ async def get_triage_response(
     conversation_history: list,
     language: str = "en"
 ) -> dict:
-    # Build messages array with history
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    try:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        for msg in conversation_history[-6:]:
+            messages.append({
+                "role": msg["role"] if msg["role"] == "user" else "assistant",
+                "content": msg["text"]
+            })
+        messages.append({"role": "user", "content": message})
 
-    # Add conversation history (last 6 messages for context)
-    for msg in conversation_history[-6:]:
-        messages.append({
-            "role": msg["role"] if msg["role"] == "user" else "assistant",
-            "content": msg["text"]
-        })
+        response = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=messages,
+            max_tokens=300,
+            temperature=0.4,
+        )
 
-    # Add current message
-    messages.append({"role": "user", "content": message})
+        reply = response.choices[0].message.content
+        severity = extract_severity(reply)
+        clean_reply = reply.replace(f"[SEVERITY: {severity}]", "").strip()
 
-    # Call Groq
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages,
-        max_tokens=300,
-        temperature=0.4,   # lower = more consistent medical responses
-    )
+        return {
+            "reply": clean_reply,
+            "severity": severity,
+            "tokens_used": response.usage.total_tokens,
+        }
 
-    reply = response.choices[0].message.content
-
-    # Extract severity from response
-    severity = extract_severity(reply)
-
-    # Clean the severity tag from display text
-    clean_reply = reply.replace(f"[SEVERITY: {severity}]", "").strip()
-
-    return {
-        "reply": clean_reply,
-        "severity": severity,
-        "tokens_used": response.usage.total_tokens,
-    }
+    except Exception as e:
+        print(f"Groq error: {e}")
+        return {
+            "reply": "I'm having trouble connecting right now. Please try again in a moment.",
+            "severity": "mild",
+            "tokens_used": 0,
+        }
 
 
 def extract_severity(text: str) -> str:
