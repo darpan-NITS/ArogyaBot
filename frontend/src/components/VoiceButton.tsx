@@ -6,6 +6,7 @@ import { Mic, MicOff } from "lucide-react";
 interface Props {
   onTranscript: (text: string) => void;
   disabled?: boolean;
+  language?: string;
 }
 
 export default function VoiceButton({ onTranscript, disabled }: Props) {
@@ -25,7 +26,7 @@ export default function VoiceButton({ onTranscript, disabled }: Props) {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = "hi-IN"; // Hindi default — we'll make this dynamic later
+    recognition.lang = language;
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
