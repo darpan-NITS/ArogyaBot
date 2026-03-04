@@ -55,7 +55,7 @@ async def get_triage_response(
 
     # Call Groq
     response = client.chat.completions.create(
-        model="llama3-70b-8192",
+        model="llama-3.3-70b-versatile",
         messages=messages,
         max_tokens=300,
         temperature=0.4,   # lower = more consistent medical responses
