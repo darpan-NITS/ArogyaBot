@@ -1,86 +1,147 @@
 "use client";
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Loader2, AlertCircle } from "lucide-react";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 interface Props {
   onTranscript: (text: string) => void;
   disabled?: boolean;
   language?: string;
+  onRecordingChange?: (isRecording: boolean) => void;
 }
 
-export default function VoiceButton({ onTranscript, disabled }: Props) {
-  const [isListening, setIsListening] = useState(false);
+const statusConfig = {
+  idle:        { color: "#00c9a7", bg: "rgba(0,201,167,0.08)",   border: "rgba(0,201,167,0.3)" },
+  listening:   { color: "#ff6b6b", bg: "rgba(255,107,107,0.12)", border: "#ff6b6b" },
+  processing:  { color: "#ffd166", bg: "rgba(255,209,102,0.12)", border: "rgba(255,209,102,0.4)" },
+  error:       { color: "#ff6b6b", bg: "rgba(255,107,107,0.08)", border: "rgba(255,107,107,0.3)" },
+  unsupported: { color: "#444",    bg: "rgba(0,0,0,0.1)",        border: "#222" },
+};
 
-  const toggleVoice = () => {
-    if (disabled) return;
+export default function VoiceButton({
+  onTranscript,
+  disabled,
+  language = "en-IN",
+  onRecordingChange,
+}: Props) {
+  const { status, errorMsg, startListening, stopListening } = useVoiceInput({
+    onTranscript: (text) => {
+      onTranscript(text);
+      toast.success(`🎙️ "${text}"`, {
+        style: {
+          background: "#0c1a1f",
+          border: "1px solid rgba(0,201,167,0.3)",
+          color: "#dde8f0",
+          fontFamily: "Outfit",
+          fontSize: "13px",
+        },
+      });
+    },
+    language,
+    onRecordingChange,
+  });
 
-    // Check browser support
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert("Voice input not supported in this browser. Use Chrome.");
-      return;
+  useEffect(() => {
+    if (errorMsg) {
+      toast.error(errorMsg, {
+        style: {
+          background: "#0c1a1f",
+          border: "1px solid rgba(255,107,107,0.3)",
+          color: "#dde8f0",
+        },
+      });
     }
+  }, [errorMsg]);
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = language;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+  const cfg = statusConfig[status];
+  const isListening  = status === "listening";
+  const isProcessing = status === "processing";
 
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      onTranscript(transcript);
-    };
-
-    recognition.onerror = () => setIsListening(false);
-
-    recognition.start();
+  const handleClick = () => {
+    if (disabled || status === "unsupported") return;
+    if (isListening) stopListening();
+    else startListening();
   };
 
   return (
-    <motion.button
-      onClick={toggleVoice}
-      whileTap={{ scale: 0.92 }}
-      style={{
-        width: "44px", height: "44px",
-        borderRadius: "50%",
-        border: `1px solid ${isListening ? "#ff6b6b" : "rgba(0,201,167,0.3)"}`,
-        background: isListening
-          ? "rgba(255,107,107,0.12)"
-          : "rgba(0,201,167,0.08)",
-        color: isListening ? "#ff6b6b" : "#00c9a7",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: disabled ? "not-allowed" : "pointer",
-        flexShrink: 0,
-        position: "relative",
-      }}
-    >
-      {/* Pulse ring when listening */}
+    <div style={{ position: "relative" }}>
+      <motion.button
+        onClick={handleClick}
+        whileTap={{ scale: disabled ? 1 : 0.9 }}
+        title={
+          status === "unsupported" ? "Use Chrome for voice input"
+          : isListening ? "Click to stop"
+          : "Click to speak"
+        }
+        style={{
+          width: "44px", height: "44px",
+          borderRadius: "50%",
+          border: `1px solid ${cfg.border}`,
+          background: cfg.bg,
+          color: cfg.color,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: disabled ? "not-allowed" : "pointer",
+          flexShrink: 0, position: "relative",
+          transition: "all 0.2s",
+          opacity: disabled ? 0.5 : 1,
+        }}
+      >
+        <AnimatePresence>
+          {isListening && (
+            <>
+              {[1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 1, opacity: 0.5 }}
+                  animate={{ scale: 1.8 + i * 0.4, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
+                  style={{
+                    position: "absolute", inset: 0,
+                    borderRadius: "50%", border: "1px solid #ff6b6b",
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </AnimatePresence>
+
+        {isProcessing ? (
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <Loader2 size={18} />
+          </motion.div>
+        ) : status === "error" ? (
+          <AlertCircle size={18} />
+        ) : isListening ? (
+          <MicOff size={18} />
+        ) : (
+          <Mic size={18} />
+        )}
+      </motion.button>
+
       <AnimatePresence>
         {isListening && (
           <motion.div
-            initial={{ scale: 1, opacity: 0.6 }}
-            animate={{ scale: 1.8, opacity: 0 }}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1, repeat: Infinity }}
             style={{
-              position: "absolute", inset: 0,
-              borderRadius: "50%",
-              border: "1px solid #ff6b6b",
+              position: "absolute",
+              bottom: "-22px", left: "50%",
+              transform: "translateX(-50%)",
+              whiteSpace: "nowrap",
+              fontFamily: "'JetBrains Mono'",
+              fontSize: "9px", color: "#ff6b6b", letterSpacing: "1px",
             }}
-          />
+          >
+            LISTENING...
+          </motion.div>
         )}
       </AnimatePresence>
-      {isListening
-        ? <MicOff size={18} />
-        : <Mic size={18} />
-      }
-    </motion.button>
+    </div>
   );
 }
