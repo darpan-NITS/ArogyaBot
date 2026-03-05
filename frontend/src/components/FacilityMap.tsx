@@ -1,10 +1,31 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import { motion } from "framer-motion";
 import { Phone, Navigation, X } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+
+const callBtnStyle: React.CSSProperties = {
+  width: "32px", height: "32px",
+  borderRadius: "50%",
+  background: "rgba(0,201,167,0.08)",
+  border: "1px solid rgba(0,201,167,0.2)",
+  display: "flex", alignItems: "center",
+  justifyContent: "center",
+  color: "#00c9a7", textDecoration: "none",
+};
+
+const dirBtnStyle: React.CSSProperties = {
+  width: "32px", height: "32px",
+  borderRadius: "50%",
+  background: "rgba(59,158,255,0.08)",
+  border: "1px solid rgba(59,158,255,0.2)",
+  display: "flex", alignItems: "center",
+  justifyContent: "center",
+  color: "#3b9eff", textDecoration: "none",
+};
 
 const userIcon = L.divIcon({
   html: `<div style="width:16px;height:16px;border-radius:50%;background:#00c9a7;border:3px solid #fff;box-shadow:0 0 0 3px rgba(0,201,167,0.3)"></div>`,
@@ -235,18 +256,20 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
               
                 href={`tel:${f.phone}`}
                 onClick={(e) => e.stopPropagation()}
-                style={{
-                  width: "32px", height: "32px",
-                  borderRadius: "50%",
-                  background: "rgba(0,201,167,0.08)",
-                  border: "1px solid rgba(0,201,167,0.2)",
-                  display: "flex", alignItems: "center",
-                  justifyContent: "center",
-                  color: "#00c9a7", textDecoration: "none",
-                }}
+                style={callBtnStyle}
               >
                 <Phone size={13} />
               </a>
+              
+                href={`https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                style={dirBtnStyle}
+              >
+                <Navigation size={13} />
+              </a>
+            </div>
 
               
                 href={`https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}`}
