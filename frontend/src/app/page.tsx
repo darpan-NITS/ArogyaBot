@@ -201,13 +201,15 @@ export default function ChatPage() {
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
+
+         {/* ── MEDICINE SUGGESTIONS ── */}
+      {medicines.length > 0 && (
+        <MedicineCard medicines={medicines} />
+        )}
         <div ref={bottomRef} />
       </div>
 
-      {/* ── MEDICINE SUGGESTIONS ── */}
-      {medicines.length > 0 && (
-        <MedicineCard medicines={medicines} />
-      )}
+     
 
       {/* ── FACILITIES + DOWNLOAD ROW ── */}
       <div style={{
