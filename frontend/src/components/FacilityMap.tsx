@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import { motion } from "framer-motion";
 import { Phone, Navigation, X } from "lucide-react";
@@ -65,22 +64,15 @@ function MapUpdater({ lat, lng }: { lat: number; lng: number }) {
   return null;
 }
 
-export default function FacilityMap({ userLat, userLng, facilities, onClose }: Props) {
+export default function FacilityMap({
+  userLat, userLng, facilities, onClose,
+}: Props) {
   const [selected, setSelected] = useState<Facility | null>(null);
 
-  const cardBg = (f: Facility) =>
-    selected?.id === f.id ? "rgba(0,201,167,0.06)" : "transparent";
-
-  const dotBg = (f: Facility) =>
-    f.type === "Hospital" ? "rgba(255,107,107,0.1)" : "rgba(255,209,102,0.1)";
-
-  const dotBorder = (f: Facility) =>
-    f.type === "Hospital"
-      ? "1px solid rgba(255,107,107,0.3)"
-      : "1px solid rgba(255,209,102,0.3)";
-
-  const dotColor = (f: Facility) =>
-    f.type === "Hospital" ? "#ff6b6b" : "#ffd166";
+  const cardBg   = (f: Facility) => selected?.id === f.id ? "rgba(0,201,167,0.06)" : "transparent";
+  const dotBg    = (f: Facility) => f.type === "Hospital" ? "rgba(255,107,107,0.1)" : "rgba(255,209,102,0.1)";
+  const dotBorder= (f: Facility) => f.type === "Hospital" ? "1px solid rgba(255,107,107,0.3)" : "1px solid rgba(255,209,102,0.3)";
+  const dotColor = (f: Facility) => f.type === "Hospital" ? "#ff6b6b" : "#ffd166";
 
   return (
     <motion.div
@@ -102,23 +94,14 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
         justifyContent: "space-between",
       }}>
         <div>
-          <div style={{
-            fontFamily: "'DM Serif Display'",
-            fontSize: "18px", color: "#dde8f0",
-          }}>
+          <div style={{ fontFamily: "'DM Serif Display'", fontSize: "18px", color: "#dde8f0" }}>
             Nearby{" "}
-            <span style={{ color: "#00c9a7", fontStyle: "italic" }}>
-              Facilities
-            </span>
+            <span style={{ color: "#00c9a7", fontStyle: "italic" }}>Facilities</span>
           </div>
-          <div style={{
-            fontFamily: "'JetBrains Mono'",
-            fontSize: "10px", color: "#1e6050", letterSpacing: "1.5px",
-          }}>
+          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: "10px", color: "#1e6050", letterSpacing: "1.5px" }}>
             {facilities.length} FACILITIES FOUND NEAR YOU
           </div>
         </div>
-
         <button
           onClick={onClose}
           style={{
@@ -143,11 +126,10 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
         >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+            attribution="&copy; CARTO"
           />
           <MapUpdater lat={userLat} lng={userLng} />
 
-          {/* User location marker */}
           <Marker position={[userLat, userLng]} icon={userIcon}>
             <Popup>
               <div style={{ fontFamily: "monospace", fontSize: "12px" }}>
@@ -156,20 +138,15 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
             </Popup>
           </Marker>
 
-          {/* Radius circle */}
           <Circle
             center={[userLat, userLng]}
             radius={5000}
             pathOptions={{
-              color: "#00c9a7",
-              fillColor: "#00c9a7",
-              fillOpacity: 0.03,
-              weight: 1,
-              dashArray: "4",
+              color: "#00c9a7", fillColor: "#00c9a7",
+              fillOpacity: 0.03, weight: 1, dashArray: "4",
             }}
           />
 
-          {/* Facility markers */}
           {facilities.map((f) => (
             <Marker
               key={f.id}
@@ -178,16 +155,10 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
               eventHandlers={{ click: () => setSelected(f) }}
             >
               <Popup>
-                <div style={{
-                  fontFamily: "sans-serif",
-                  fontSize: "12px",
-                  minWidth: "160px",
-                }}>
+                <div style={{ fontFamily: "sans-serif", fontSize: "12px", minWidth: "160px" }}>
                   <strong>{f.name}</strong>
                   <br />
-                  <span style={{ color: "#666" }}>
-                    {f.type} · {f.distance_km}km
-                  </span>
+                  <span style={{ color: "#666" }}>{f.type} · {f.distance_km}km</span>
                   <br />
                   📞 {f.phone}
                 </div>
@@ -217,41 +188,29 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
               transition: "background 0.2s",
             }}
           >
-            {/* Index dot */}
             <div style={{
-              width: "28px", height: "28px",
-              borderRadius: "50%",
-              background: dotBg(f),
-              border: dotBorder(f),
-              display: "flex", alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "'JetBrains Mono'",
-              fontSize: "11px",
-              color: dotColor(f),
-              flexShrink: 0,
+              width: "28px", height: "28px", borderRadius: "50%",
+              background: dotBg(f), border: dotBorder(f),
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "'JetBrains Mono'", fontSize: "11px",
+              color: dotColor(f), flexShrink: 0,
             }}>
               {i + 1}
             </div>
 
-            {/* Facility info */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
                 fontFamily: "'Outfit'", fontSize: "13px",
                 color: "#c8daea", fontWeight: 500,
-                whiteSpace: "nowrap", overflow: "hidden",
-                textOverflow: "ellipsis",
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
               }}>
                 {f.name}
               </div>
-              <div style={{
-                fontFamily: "'JetBrains Mono'",
-                fontSize: "10px", color: "#1e4060", marginTop: "2px",
-              }}>
+              <div style={{ fontFamily: "'JetBrains Mono'", fontSize: "10px", color: "#1e4060", marginTop: "2px" }}>
                 {f.type} · {f.distance_km} km away
               </div>
             </div>
 
-            {/* Action buttons */}
             <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
               
                 href={`tel:${f.phone}`}
@@ -266,25 +225,6 @@ export default function FacilityMap({ userLat, userLng, facilities, onClose }: P
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 style={dirBtnStyle}
-              >
-                <Navigation size={13} />
-              </a>
-            </div>
-
-              
-                href={`https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}`}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  width: "32px", height: "32px",
-                  borderRadius: "50%",
-                  background: "rgba(59,158,255,0.08)",
-                  border: "1px solid rgba(59,158,255,0.2)",
-                  display: "flex", alignItems: "center",
-                  justifyContent: "center",
-                  color: "#3b9eff", textDecoration: "none",
-                }}
               >
                 <Navigation size={13} />
               </a>
