@@ -1,39 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap');
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 :root {
-  --bg-primary: #070d0f;
-  --bg-secondary: #0c1a1f;
-  --bg-card: #0f2028;
-  --accent-teal: #00c9a7;
-  --accent-teal-dim: rgba(0, 201, 167, 0.12);
-  --accent-red: #ff6b6b;
+  --bg-primary:    #070d0f;
+  --bg-secondary:  #0c1a1f;
+  --accent-teal:   #00c9a7;
+  --accent-red:    #ff6b6b;
   --accent-yellow: #ffd166;
-  --text-primary: #dde8f0;
-  --text-secondary: #4a7a8a;
-  --text-dim: #1e4050;
-  --border: #0e2530;
+  --text-primary:  #dde8f0;
+  --text-secondary:#4a7a8a;
+  --border:        #0e2530;
 }
 
 html, body {
   height: 100%;
+  overflow: hidden;
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* Scrollbar */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #0e2530; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #1a3a4a; }
 
-/* Fix Leaflet map z-index issues */
+/* Selection */
+::selection {
+  background: rgba(0, 201, 167, 0.2);
+  color: #dde8f0;
+}
+
+/* Leaflet */
 .leaflet-container {
   background: #0a1520 !important;
+  font-family: 'Outfit', sans-serif !important;
 }
 .leaflet-tile {
   filter: brightness(0.85) saturate(0.8);
@@ -43,7 +49,24 @@ html, body {
   border: 1px solid #0e2530 !important;
   color: #dde8f0 !important;
   border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
 }
 .leaflet-popup-tip {
   background: #0c1a1f !important;
+}
+.leaflet-control-zoom a {
+  background: #0c1a1f !important;
+  border-color: #0e2530 !important;
+  color: #00c9a7 !important;
+}
+
+/* Mobile tap highlight */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* PWA safe areas */
+@supports (padding: max(0px)) {
+  body {
+    padding-top:    env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
