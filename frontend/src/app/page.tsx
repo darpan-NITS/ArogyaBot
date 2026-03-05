@@ -7,8 +7,10 @@ import MessageBubble from "@/components/MessageBubble";
 import VoiceButton from "@/components/VoiceButton";
 import VoiceWaveform from "@/components/VoiceWaveform";
 import LanguageSelector, { LANGUAGES } from "@/components/LanguageSelector";
-import { sendMessage, createSession } from "@/lib/api";
 import FindFacilitiesButton from "@/components/FindFacilitiesButton";
+import MedicineCard from "@/components/MedicineCard";
+import DownloadReportButton from "@/components/DownloadReportButton";
+import { sendMessage, createSession } from "@/lib/api";
 
 const WELCOME_MESSAGE: Message = {
   id: "welcome",
@@ -19,13 +21,14 @@ const WELCOME_MESSAGE: Message = {
 };
 
 export default function ChatPage() {
-  const [messages, setMessages]         = useState<Message[]>([WELCOME_MESSAGE]);
-  const [input, setInput]               = useState("");
-  const [isLoading, setIsLoading]       = useState(false);
-  const [sessionId, setSessionId]       = useState<string | null>(null);
-  const [language, setLanguage]         = useState("en");
-  const [isRecording, setIsRecording]   = useState(false);
-  const bottomRef                       = useRef<HTMLDivElement>(null);
+  const [messages, setMessages]       = useState<Message[]>([WELCOME_MESSAGE]);
+  const [input, setInput]             = useState("");
+  const [isLoading, setIsLoading]     = useState(false);
+  const [sessionId, setSessionId]     = useState<string | null>(null);
+  const [language, setLanguage]       = useState("en");
+  const [isRecording, setIsRecording] = useState(false);
+  const [medicines, setMedicines]     = useState<any[]>([]);
+  const bottomRef                     = useRef<HTMLDivElement>(null);
 
   // Create session on first load
   useEffect(() => {
@@ -37,6 +40,7 @@ export default function ChatPage() {
     setLanguage(code);
     const data = await createSession(code);
     setSessionId(data.session_id);
+    setMedicines([]);
     setMessages([{
       ...WELCOME_MESSAGE,
       id: Date.now().toString(),
@@ -77,8 +81,17 @@ export default function ChatPage() {
     try {
       const data = await sendMessage(text.trim(), sessionId, language);
 
+      // Fetch medicines if symptoms were extracted
+      if (data.entities?.symptoms?.length > 0) {
+        const medRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/medicines?symptoms=${data.entities.symptoms.join(",")}`
+        );
+        const medData = await medRes.json();
+        setMedicines(medData.medicines || []);
+      }
+
       setMessages((prev) =>
-        // Attach entities to the user message
+        // Attach entities to user message
         prev.map((m) =>
           m.id === userMsgId
             ? { ...m, entities: data.entities }
@@ -191,8 +204,27 @@ export default function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-       {/* FIND FACILITIES BUTTON */}       {/* ← add this */}
-      <FindFacilitiesButton />
+      {/* ── MEDICINE SUGGESTIONS ── */}
+      {medicines.length > 0 && (
+        <MedicineCard medicines={medicines} />
+      )}
+
+      {/* ── FACILITIES + DOWNLOAD ROW ── */}
+      <div style={{
+        display: "flex", alignItems: "center",
+        justifyContent: "space-between",
+        padding: "8px 20px",
+        borderTop: "1px solid var(--border)",
+        background: "var(--bg-secondary)",
+        flexShrink: 0,
+      }}>
+        <FindFacilitiesButton />
+        <DownloadReportButton
+          messages={messages}
+          sessionId={sessionId || ""}
+          language={language}
+        />
+      </div>
 
       {/* ── INPUT BAR ── */}
       <motion.div
