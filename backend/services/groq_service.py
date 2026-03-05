@@ -1,5 +1,6 @@
 from groq import Groq
 from dotenv import load_dotenv
+from services.ner_service import extract_medical_entities
 import os
 
 load_dotenv()
@@ -40,49 +41,73 @@ async def get_triage_response(
     conversation_history: list,
     language: str = "en"
 ) -> dict:
-    # Build messages array with history
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    try:
+        # ── Run NER on the message ──
+        entities = extract_medical_entities(message)
 
-    # Add conversation history (last 6 messages for context)
-    for msg in conversation_history[-6:]:
-        messages.append({
-            "role": msg["role"] if msg["role"] == "user" else "assistant",
-            "content": msg["text"]
-        })
+        # ── Build enriched prompt ──
+        enriched_message = message
+        if entities["structured_summary"]:
+            enriched_message = (
+                f"{message}\n\n"
+                f"[Extracted medical context: {entities['structured_summary']}]"
+            )
 
-    # Add current message
-    messages.append({"role": "user", "content": message})
+        # ── Build messages array ──
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        for msg in conversation_history[-6:]:
+            messages.append({
+                "role": "user" if msg["role"] == "user" else "assistant",
+                "content": msg["text"]
+            })
+        messages.append({"role": "user", "content": enriched_message})
 
-    # Call Groq
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages,
-        max_tokens=300,
-        temperature=0.4,   # lower = more consistent medical responses
-    )
+        # ── Call Groq ──
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            max_tokens=300,
+            temperature=0.4,
+        )
 
-    reply = response.choices[0].message.content
+        reply = response.choices[0].message.content
 
-    # Extract severity from response
-    severity = extract_severity(reply)
+        # ── Determine severity — NER takes priority over LLM ──
+        llm_severity = extract_severity_from_reply(reply)
+        ner_severity = entities["severity_indicated"]
 
-    # Clean the severity tag from display text
-    clean_reply = reply.replace(f"[SEVERITY: {severity}]", "").strip()
+        # Use whichever is more severe
+        severity_rank = {"mild": 1, "moderate": 2, "urgent": 3, "emergency": 4}
+        ner_rank = severity_rank.get(ner_severity, 0)
+        llm_rank = severity_rank.get(llm_severity, 1)
+        final_severity = ner_severity if ner_rank > llm_rank else llm_severity
 
-    return {
-        "reply": clean_reply,
-        "severity": severity,
-        "tokens_used": response.usage.total_tokens,
-    }
+        # Clean severity tag from display
+        clean_reply = reply
+        for tag in ["[SEVERITY: mild]", "[SEVERITY: moderate]",
+                    "[SEVERITY: urgent]", "[SEVERITY: emergency]"]:
+            clean_reply = clean_reply.replace(tag, "").strip()
+
+        return {
+            "reply":      clean_reply,
+            "severity":   final_severity,
+            "entities":   entities,
+            "tokens_used": response.usage.total_tokens,
+        }
+
+    except Exception as e:
+        print(f"Groq error: {e}")
+        return {
+            "reply":    "I'm having trouble connecting right now. Please try again.",
+            "severity": "mild",
+            "entities": {},
+            "tokens_used": 0,
+        }
 
 
-def extract_severity(text: str) -> str:
+def extract_severity_from_reply(text: str) -> str:
     text_lower = text.lower()
-    if "[severity: emergency]" in text_lower:
-        return "emergency"
-    elif "[severity: urgent]" in text_lower:
-        return "urgent"
-    elif "[severity: moderate]" in text_lower:
-        return "moderate"
-    else:
-        return "mild"
+    if "[severity: emergency]" in text_lower: return "emergency"
+    if "[severity: urgent]"    in text_lower: return "urgent"
+    if "[severity: moderate]"  in text_lower: return "moderate"
+    return "mild"
