@@ -46,6 +46,7 @@ async def chat(req: ChatRequest):
         "role": "bot",
         "text": result["reply"],
         "severity": result["severity"],
+        "entities":  result.get("entities", {}),
         "timestamp": datetime.utcnow().isoformat(),
     }
 
@@ -60,6 +61,7 @@ async def chat(req: ChatRequest):
     return {
         "reply": result["reply"],
         "severity": result["severity"],
+        "entities": result.get("entities", {}),
         "session_id": req.session_id,
         "language": language,
     }
