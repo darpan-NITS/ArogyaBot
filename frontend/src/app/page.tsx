@@ -8,6 +8,7 @@ import VoiceButton from "@/components/VoiceButton";
 import VoiceWaveform from "@/components/VoiceWaveform";
 import LanguageSelector, { LANGUAGES } from "@/components/LanguageSelector";
 import { sendMessage, createSession } from "@/lib/api";
+import FindFacilitiesButton from "@/components/FindFacilitiesButton";
 
 const WELCOME_MESSAGE: Message = {
   id: "welcome",
@@ -189,6 +190,9 @@ export default function ChatPage() {
         ))}
         <div ref={bottomRef} />
       </div>
+
+       {/* FIND FACILITIES BUTTON */}       {/* ← add this */}
+      <FindFacilitiesButton />
 
       {/* ── INPUT BAR ── */}
       <motion.div
