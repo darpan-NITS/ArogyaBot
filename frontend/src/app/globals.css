@@ -30,3 +30,20 @@ html, body {
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Fix Leaflet map z-index issues */
+.leaflet-container {
+  background: #0a1520 !important;
+}
+.leaflet-tile {
+  filter: brightness(0.85) saturate(0.8);
+}
+.leaflet-popup-content-wrapper {
+  background: #0c1a1f !important;
+  border: 1px solid #0e2530 !important;
+  color: #dde8f0 !important;
+  border-radius: 8px !important;
+}
+.leaflet-popup-tip {
+  background: #0c1a1f !important;
+}
