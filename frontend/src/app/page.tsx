@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { Message } from "@/types/chat";
 import MessageBubble from "@/components/MessageBubble";
 import VoiceButton from "@/components/VoiceButton";
+import VoiceWaveform from "@/components/VoiceWaveform";
 import LanguageSelector, { LANGUAGES } from "@/components/LanguageSelector";
 import { sendMessage, createSession } from "@/lib/api";
 
@@ -17,12 +18,13 @@ const WELCOME_MESSAGE: Message = {
 };
 
 export default function ChatPage() {
-  const [messages, setMessages]     = useState<Message[]>([WELCOME_MESSAGE]);
-  const [input, setInput]           = useState("");
-  const [isLoading, setIsLoading]   = useState(false);
-  const [sessionId, setSessionId]   = useState<string | null>(null);
-  const [language, setLanguage]     = useState("en");
-  const bottomRef                   = useRef<HTMLDivElement>(null);
+  const [messages, setMessages]         = useState<Message[]>([WELCOME_MESSAGE]);
+  const [input, setInput]               = useState("");
+  const [isLoading, setIsLoading]       = useState(false);
+  const [sessionId, setSessionId]       = useState<string | null>(null);
+  const [language, setLanguage]         = useState("en");
+  const [isRecording, setIsRecording]   = useState(false);
+  const bottomRef                       = useRef<HTMLDivElement>(null);
 
   // Create session on first load
   useEffect(() => {
@@ -48,39 +50,57 @@ export default function ChatPage() {
   const handleSend = async (text: string) => {
     if (!text.trim() || isLoading || !sessionId) return;
 
+    const userMsgId = Date.now().toString();
+
     const userMsg: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      text: text.trim(),
+      id:        userMsgId,
+      role:      "user",
+      text:      text.trim(),
       timestamp: new Date(),
+      entities:  undefined,
     };
+
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
     // Typing indicator
     setMessages((prev) => [...prev, {
-      id: "typing", role: "bot", text: "",
-      timestamp: new Date(), isTyping: true,
+      id:        "typing",
+      role:      "bot",
+      text:      "",
+      timestamp: new Date(),
+      isTyping:  true,
     }]);
 
     try {
       const data = await sendMessage(text.trim(), sessionId, language);
+
       setMessages((prev) =>
-        prev.filter((m) => m.id !== "typing").concat({
-          id: Date.now().toString(),
-          role: "bot",
-          text: data.reply,
+        // Attach entities to the user message
+        prev.map((m) =>
+          m.id === userMsgId
+            ? { ...m, entities: data.entities }
+            : m
+        )
+        // Remove typing indicator
+        .filter((m) => m.id !== "typing")
+        // Add bot response
+        .concat({
+          id:        Date.now().toString(),
+          role:      "bot",
+          text:      data.reply,
           timestamp: new Date(),
-          severity: data.severity || null,
+          severity:  data.severity || null,
         })
       );
+
     } catch {
       setMessages((prev) =>
         prev.filter((m) => m.id !== "typing").concat({
-          id: Date.now().toString(),
-          role: "bot",
-          text: "Connection error. Please make sure the backend is running.",
+          id:        Date.now().toString(),
+          role:      "bot",
+          text:      "Connection error. Please make sure the backend is running.",
           timestamp: new Date(),
         })
       );
@@ -96,7 +116,7 @@ export default function ChatPage() {
       maxWidth: "760px", margin: "0 auto",
     }}>
 
-      {/* HEADER */}
+      {/* ── HEADER ── */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -134,7 +154,13 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{
+          marginLeft: "auto",
+          display: "flex", alignItems: "center", gap: "12px",
+        }}>
+          {/* Waveform — only shows when recording */}
+          <VoiceWaveform isActive={isRecording} />
+
           {/* Language selector */}
           <LanguageSelector selected={language} onChange={handleLanguageChange} />
 
@@ -156,7 +182,7 @@ export default function ChatPage() {
         </div>
       </motion.header>
 
-      {/* MESSAGES */}
+      {/* ── MESSAGES ── */}
       <div style={{ flex: 1, overflowY: "auto", padding: "24px 0" }}>
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
@@ -164,7 +190,7 @@ export default function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      {/* INPUT BAR */}
+      {/* ── INPUT BAR ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -177,28 +203,38 @@ export default function ChatPage() {
         }}
       >
         <VoiceButton
-          onTranscript={(text) => setInput(text)}
+          onTranscript={(text) => {
+            setInput(text);
+            setIsRecording(false);
+          }}
+          onRecordingChange={setIsRecording}
           disabled={isLoading}
-          language={LANGUAGES.find((l) => l.code === language)?.speechCode || "en-IN"}
+          language={
+            LANGUAGES.find((l) => l.code === language)?.speechCode || "en-IN"
+          }
         />
 
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend(input)}
-          placeholder={language === "hi"
-            ? "अपने लक्षण बताएं..."
-            : "Describe your symptoms..."}
+          placeholder={
+            language === "hi"
+              ? "अपने लक्षण बताएं..."
+              : "Describe your symptoms..."
+          }
           disabled={isLoading}
           style={{
-            flex: 1, background: "rgba(0,201,167,0.04)",
+            flex: 1,
+            background: "rgba(0,201,167,0.04)",
             border: "1px solid var(--border)",
             borderRadius: "22px", padding: "12px 18px",
             color: "#dde8f0", fontFamily: "'Outfit'",
             fontSize: "14px", outline: "none",
+            transition: "border-color 0.2s",
           }}
           onFocus={(e) => e.target.style.borderColor = "rgba(0,201,167,0.4)"}
-          onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+          onBlur={(e)  => e.target.style.borderColor = "var(--border)"}
         />
 
         <motion.button
@@ -206,9 +242,11 @@ export default function ChatPage() {
           onClick={() => handleSend(input)}
           disabled={!input.trim() || isLoading}
           style={{
-            width: "44px", height: "44px", borderRadius: "50%",
+            width: "44px", height: "44px",
+            borderRadius: "50%",
             background: input.trim() && !isLoading
-              ? "#00c9a7" : "rgba(0,201,167,0.08)",
+              ? "#00c9a7"
+              : "rgba(0,201,167,0.08)",
             border: "none",
             color: input.trim() && !isLoading ? "#070d0f" : "#1e4050",
             display: "flex", alignItems: "center", justifyContent: "center",
