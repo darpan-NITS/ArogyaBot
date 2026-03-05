@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from db.database import ping_db
-from routers import health, chat, session, voice , facility
+from routers import health, chat, session, voice , facility , medicine
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,6 +23,7 @@ app.include_router(chat.router)
 app.include_router(session.router)
 app.include_router(voice.router)
 app.include_router(facility.router)
+app.include_router(medicine.router)
 
 @app.get("/")
 def root():
