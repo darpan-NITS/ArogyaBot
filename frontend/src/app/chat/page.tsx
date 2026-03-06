@@ -42,15 +42,20 @@ export default function ChatPage() {
   // Wake backend + create session
   useEffect(() => {
     const init = async () => {
-      try {
-        await fetch(`${API_URL}/health`);
-        const data = await createSession("en");
-        setSessionId(data.session_id);
-        setBackendReady(true);
-      } catch (err) {
-        console.error("Backend init failed:", err);
-        setBackendReady(false);
+      // Retry up to 3 times for Render cold start
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await fetch(`${API_URL}/`);           // ← was /health (wrong)
+          const data = await createSession("en");
+          setSessionId(data.session_id);
+          setBackendReady(true);
+          return;
+        } catch (err) {
+          console.warn(`Init attempt ${attempt} failed:`, err);
+          if (attempt < 3) await new Promise(r => setTimeout(r, 3000));
+        }
       }
+      setBackendReady(false);
     };
     init();
   }, []);
