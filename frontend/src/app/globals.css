@@ -4,14 +4,6 @@
   padding: 0;
 }
 
-:root {
-  --bg-primary:   #070d0f;
-  --bg-secondary: #0c1a1f;
-  --accent:       #00c9a7;
-  --border:       #0e2530;
-  --text:         #dde8f0;
-}
-
 html, body {
   height: 100%;
   overflow: hidden;
@@ -33,9 +25,7 @@ html, body {
   background: #0a1520 !important;
   font-family: 'Outfit', sans-serif !important;
 }
-.leaflet-tile {
-  filter: brightness(0.85) saturate(0.8);
-}
+.leaflet-tile { filter: brightness(0.85) saturate(0.8); }
 .leaflet-popup-content-wrapper {
   background: #0c1a1f !important;
   border: 1px solid #0e2530 !important;
