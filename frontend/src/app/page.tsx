@@ -22,6 +22,29 @@ const WELCOME_MESSAGE: Message = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Retry helper — keeps trying until Render wakes up
+async function initWithRetry(
+  setSessionId: (id: string) => void,
+  setStatus: (s: string) => void
+) {
+  const delays = [0, 5000, 10000, 15000, 20000]; // retry up to 5x
+  for (let i = 0; i < delays.length; i++) {
+    if (delays[i] > 0) {
+      setStatus(`RETRYING... (${i}/${delays.length - 1})`);
+      await new Promise((r) => setTimeout(r, delays[i]));
+    }
+    try {
+      const data = await createSession("en");
+      setSessionId(data.session_id);
+      setStatus("READY");
+      return;
+    } catch {
+      // keep retrying
+    }
+  }
+  setStatus("OFFLINE");
+}
+
 export default function ChatPage() {
   const [messages, setMessages]       = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput]             = useState("");
@@ -30,34 +53,11 @@ export default function ChatPage() {
   const [language, setLanguage]       = useState("en");
   const [isRecording, setIsRecording] = useState(false);
   const [medicines, setMedicines]     = useState<any[]>([]);
-  const [backendReady, setBackendReady] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [status, setStatus]           = useState("CONNECTING...");
+  const bottomRef                     = useRef<HTMLDivElement>(null);
 
-  // Restore body overflow hidden (landing page sets it to auto)
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-  }, []);
-
-  // Wake backend + create session
-  useEffect(() => {
-    const init = async () => {
-      // Retry up to 3 times for Render cold start
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-          await fetch(`${API_URL}/`);           // ← was /health (wrong)
-          const data = await createSession("en");
-          setSessionId(data.session_id);
-          setBackendReady(true);
-          return;
-        } catch (err) {
-          console.warn(`Init attempt ${attempt} failed:`, err);
-          if (attempt < 3) await new Promise(r => setTimeout(r, 3000));
-        }
-      }
-      setBackendReady(false);
-    };
-    init();
+    initWithRetry(setSessionId, setStatus);
   }, []);
 
   const handleLanguageChange = async (code: string) => {
@@ -71,8 +71,8 @@ export default function ChatPage() {
         id: Date.now().toString(),
         timestamp: new Date(),
       }]);
-    } catch (err) {
-      console.error("Session creation failed:", err);
+    } catch {
+      console.error("Language switch failed");
     }
   };
 
@@ -84,24 +84,16 @@ export default function ChatPage() {
     if (!text.trim() || isLoading || !sessionId) return;
 
     const userMsgId = Date.now().toString();
-    const userMsg: Message = {
-      id: userMsgId,
-      role: "user",
-      text: text.trim(),
-      timestamp: new Date(),
+    setMessages((prev) => [...prev, {
+      id: userMsgId, role: "user",
+      text: text.trim(), timestamp: new Date(),
       entities: undefined,
-    };
-
-    setMessages((prev) => [...prev, userMsg]);
+    }]);
     setInput("");
     setIsLoading(true);
-
     setMessages((prev) => [...prev, {
-      id: "typing",
-      role: "bot",
-      text: "",
-      timestamp: new Date(),
-      isTyping: true,
+      id: "typing", role: "bot",
+      text: "", timestamp: new Date(), isTyping: true,
     }]);
 
     try {
@@ -120,18 +112,15 @@ export default function ChatPage() {
           .map((m) => m.id === userMsgId ? { ...m, entities: data.entities } : m)
           .filter((m) => m.id !== "typing")
           .concat({
-            id: Date.now().toString(),
-            role: "bot",
-            text: data.reply,
-            timestamp: new Date(),
+            id: Date.now().toString(), role: "bot",
+            text: data.reply, timestamp: new Date(),
             severity: data.severity || null,
           })
       );
     } catch {
       setMessages((prev) =>
         prev.filter((m) => m.id !== "typing").concat({
-          id: Date.now().toString(),
-          role: "bot",
+          id: Date.now().toString(), role: "bot",
           text: "Connection error. Please try again.",
           timestamp: new Date(),
         })
@@ -141,17 +130,18 @@ export default function ChatPage() {
     }
   };
 
-  const sessionLabel = sessionId
+  const headerLabel = sessionId
     ? `SESSION · ${sessionId.slice(0, 8).toUpperCase()}`
-    : backendReady
-    ? "INITIALIZING..."
-    : "CONNECTING...";
+    : status;
+
+  const dotColor = sessionId ? "#00c9a7"
+    : status === "OFFLINE" ? "#ff6b6b"
+    : "#ffd166";
 
   return (
     <div style={{
       display: "flex", flexDirection: "column",
-      height: "100vh",
-      background: "var(--bg-primary)",
+      height: "100vh", background: "#070d0f",
       maxWidth: "760px", margin: "0 auto",
     }}>
 
@@ -160,51 +150,45 @@ export default function ChatPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          padding: "10px 14px",
-          borderBottom: "1px solid var(--border)",
-          background: "var(--bg-secondary)",
+          padding: "10px 16px",
+          borderBottom: "1px solid #0e2530",
+          background: "#0c1a1f",
           flexShrink: 0,
         }}
       >
-        {/* Single responsive row */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: "10px",
-        }}>
-          {/* Logo icon */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div style={{
-            width: "34px", height: "34px", borderRadius: "9px",
-            background: "rgba(90,168,160,0.12)",
-            border: "1px solid rgba(90,168,160,0.25)",
+            width: "36px", height: "36px", borderRadius: "10px",
+            background: "rgba(0,201,167,0.1)",
+            border: "1px solid rgba(0,201,167,0.25)",
             display: "flex", alignItems: "center",
-            justifyContent: "center", fontSize: "16px",
+            justifyContent: "center", fontSize: "18px",
             flexShrink: 0,
           }}>🩺</div>
 
-          {/* Title + session */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <h1 style={{
               fontFamily: "'DM Serif Display'",
-              fontSize: "17px", fontWeight: 400,
-              color: "var(--text-primary)", letterSpacing: "-0.3px",
+              fontSize: "18px", fontWeight: 400,
+              color: "#dde8f0", letterSpacing: "-0.3px",
               whiteSpace: "nowrap",
             }}>
-              Arogya<span style={{ color: "var(--accent-teal)", fontStyle: "italic" }}>Bot</span>
+              Arogya<span style={{ color: "#00c9a7", fontStyle: "italic" }}>Bot</span>
             </h1>
             <div style={{
               fontFamily: "'JetBrains Mono'",
-              fontSize: "8px", color: "var(--text-muted)",
-              letterSpacing: "0.8px",
+              fontSize: "9px", color: "#1e6050",
+              letterSpacing: "1px",
               whiteSpace: "nowrap", overflow: "hidden",
               textOverflow: "ellipsis",
             }}>
-              {sessionLabel}
+              {headerLabel}
             </div>
           </div>
 
-          {/* Right controls */}
           <div style={{
             display: "flex", alignItems: "center",
-            gap: "6px", flexShrink: 0,
+            gap: "8px", flexShrink: 0,
           }}>
             {isRecording && <VoiceWaveform isActive={isRecording} />}
             <LanguageSelector selected={language} onChange={handleLanguageChange} />
@@ -214,8 +198,9 @@ export default function ChatPage() {
               style={{
                 width: "6px", height: "6px",
                 borderRadius: "50%",
-                background: backendReady ? "var(--accent-teal)" : "var(--accent-salmon)",
+                background: dotColor,
                 flexShrink: 0,
+                transition: "background 0.5s",
               }}
             />
           </div>
@@ -233,13 +218,50 @@ export default function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
+      {/* ── RENDER WAKE-UP BANNER ── */}
+      {!sessionId && status !== "OFFLINE" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={{
+            padding: "10px 20px",
+            background: "rgba(255,209,102,0.06)",
+            borderTop: "1px solid rgba(255,209,102,0.15)",
+            fontFamily: "'JetBrains Mono'",
+            fontSize: "10px", color: "#ffd166",
+            letterSpacing: "0.5px",
+            textAlign: "center", flexShrink: 0,
+          }}
+        >
+          ⏳ Waking up server — this takes ~30 seconds on first load...
+        </motion.div>
+      )}
+
+      {/* ── OFFLINE BANNER ── */}
+      {status === "OFFLINE" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={{
+            padding: "10px 20px",
+            background: "rgba(255,107,107,0.06)",
+            borderTop: "1px solid rgba(255,107,107,0.15)",
+            fontFamily: "'JetBrains Mono'",
+            fontSize: "10px", color: "#ff6b6b",
+            textAlign: "center", flexShrink: 0,
+          }}
+        >
+          ❌ Server offline — please try refreshing the page
+        </motion.div>
+      )}
+
       {/* ── FACILITIES + DOWNLOAD ── */}
       <div style={{
         display: "flex", alignItems: "center",
         justifyContent: "space-between",
         padding: "8px 16px",
-        borderTop: "1px solid var(--border)",
-        background: "var(--bg-secondary)",
+        borderTop: "1px solid #0e2530",
+        background: "#0c1a1f",
         flexShrink: 0,
       }}>
         <FindFacilitiesButton />
@@ -255,10 +277,10 @@ export default function ChatPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          padding: "12px 14px",
-          borderTop: "1px solid var(--border)",
-          background: "var(--bg-secondary)",
-          display: "flex", gap: "8px",
+          padding: "14px 16px",
+          borderTop: "1px solid #0e2530",
+          background: "#0c1a1f",
+          display: "flex", gap: "10px",
           alignItems: "center", flexShrink: 0,
         }}
       >
@@ -268,7 +290,7 @@ export default function ChatPage() {
             setIsRecording(false);
           }}
           onRecordingChange={setIsRecording}
-          disabled={isLoading}
+          disabled={isLoading || !sessionId}
           language={
             LANGUAGES.find((l) => l.code === language)?.speechCode || "en-IN"
           }
@@ -280,7 +302,7 @@ export default function ChatPage() {
           onKeyDown={(e) => e.key === "Enter" && handleSend(input)}
           placeholder={
             !sessionId
-              ? "Connecting..."
+              ? "Waiting for server..."
               : language === "hi" ? "अपने लक्षण बताएं..."
               : language === "as" ? "আপোনাৰ লক্ষণ কওক..."
               : "Describe your symptoms..."
@@ -288,16 +310,16 @@ export default function ChatPage() {
           disabled={isLoading || !sessionId}
           style={{
             flex: 1,
-            background: "rgba(90,168,160,0.05)",
-            border: "1px solid var(--border)",
-            borderRadius: "22px", padding: "11px 16px",
-            color: "var(--text-primary)",
-            fontFamily: "'Outfit'",
+            background: "rgba(0,201,167,0.04)",
+            border: "1px solid #0e2530",
+            borderRadius: "22px", padding: "12px 18px",
+            color: "#dde8f0", fontFamily: "'Outfit'",
             fontSize: "14px", outline: "none",
             transition: "border-color 0.2s",
+            opacity: !sessionId ? 0.5 : 1,
           }}
-          onFocus={(e) => e.target.style.borderColor = "rgba(90,168,160,0.4)"}
-          onBlur={(e)  => e.target.style.borderColor = "var(--border)"}
+          onFocus={(e) => e.target.style.borderColor = "rgba(0,201,167,0.4)"}
+          onBlur={(e)  => e.target.style.borderColor = "#0e2530"}
         />
 
         <motion.button
@@ -305,15 +327,14 @@ export default function ChatPage() {
           onClick={() => handleSend(input)}
           disabled={!input.trim() || isLoading || !sessionId}
           style={{
-            width: "42px", height: "42px",
+            width: "44px", height: "44px",
             borderRadius: "50%",
             background: input.trim() && !isLoading && sessionId
-              ? "var(--accent-teal)"
-              : "rgba(90,168,160,0.08)",
+              ? "#00c9a7"
+              : "rgba(0,201,167,0.08)",
             border: "none",
             color: input.trim() && !isLoading && sessionId
-              ? "#0d1515"
-              : "var(--text-muted)",
+              ? "#070d0f" : "#1e4050",
             display: "flex", alignItems: "center",
             justifyContent: "center",
             cursor: input.trim() && !isLoading && sessionId
@@ -321,7 +342,7 @@ export default function ChatPage() {
             transition: "all 0.2s", flexShrink: 0,
           }}
         >
-          <Send size={17} />
+          <Send size={18} />
         </motion.button>
       </motion.div>
     </div>
