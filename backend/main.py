@@ -14,9 +14,8 @@ app = FastAPI(title="ArogyaBot API", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000",
-        "https://arogyaai-pied.vercel.app",
-        "https://*.vercel.app",
-                  ],
+        "https://arogyaai-pied.vercel.app/",
+        "https://*.vercel.app",],
     allow_methods=["*"],
     allow_headers=["*"],
 )
