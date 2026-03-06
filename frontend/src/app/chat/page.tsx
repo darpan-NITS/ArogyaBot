@@ -20,6 +20,8 @@ const WELCOME_MESSAGE: Message = {
   severity: null,
 };
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function ChatPage() {
   const [messages, setMessages]       = useState<Message[]>([WELCOME_MESSAGE]);
   const [input, setInput]             = useState("");
@@ -28,24 +30,45 @@ export default function ChatPage() {
   const [language, setLanguage]       = useState("en");
   const [isRecording, setIsRecording] = useState(false);
   const [medicines, setMedicines]     = useState<any[]>([]);
-  const bottomRef                     = useRef<HTMLDivElement>(null);
+  const [backendReady, setBackendReady] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Create session on first load
+  // Restore body overflow hidden (landing page sets it to auto)
   useEffect(() => {
-    createSession("en").then((data) => setSessionId(data.session_id));
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
   }, []);
 
-  // Re-create session on language change
+  // Wake backend + create session
+  useEffect(() => {
+    const init = async () => {
+      try {
+        await fetch(`${API_URL}/health`);
+        const data = await createSession("en");
+        setSessionId(data.session_id);
+        setBackendReady(true);
+      } catch (err) {
+        console.error("Backend init failed:", err);
+        setBackendReady(false);
+      }
+    };
+    init();
+  }, []);
+
   const handleLanguageChange = async (code: string) => {
     setLanguage(code);
-    const data = await createSession(code);
-    setSessionId(data.session_id);
-    setMedicines([]);
-    setMessages([{
-      ...WELCOME_MESSAGE,
-      id: Date.now().toString(),
-      timestamp: new Date(),
-    }]);
+    try {
+      const data = await createSession(code);
+      setSessionId(data.session_id);
+      setMedicines([]);
+      setMessages([{
+        ...WELCOME_MESSAGE,
+        id: Date.now().toString(),
+        timestamp: new Date(),
+      }]);
+    } catch (err) {
+      console.error("Session creation failed:", err);
+    }
   };
 
   useEffect(() => {
@@ -56,65 +79,55 @@ export default function ChatPage() {
     if (!text.trim() || isLoading || !sessionId) return;
 
     const userMsgId = Date.now().toString();
-
     const userMsg: Message = {
-      id:        userMsgId,
-      role:      "user",
-      text:      text.trim(),
+      id: userMsgId,
+      role: "user",
+      text: text.trim(),
       timestamp: new Date(),
-      entities:  undefined,
+      entities: undefined,
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
-    // Typing indicator
     setMessages((prev) => [...prev, {
-      id:        "typing",
-      role:      "bot",
-      text:      "",
+      id: "typing",
+      role: "bot",
+      text: "",
       timestamp: new Date(),
-      isTyping:  true,
+      isTyping: true,
     }]);
 
     try {
       const data = await sendMessage(text.trim(), sessionId, language);
 
-      // Fetch medicines if symptoms were extracted
       if (data.entities?.symptoms?.length > 0) {
         const medRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/medicines?symptoms=${data.entities.symptoms.join(",")}`
+          `${API_URL}/api/medicines?symptoms=${data.entities.symptoms.join(",")}`
         );
         const medData = await medRes.json();
         setMedicines(medData.medicines || []);
       }
 
       setMessages((prev) =>
-        // Attach entities to user message
-        prev.map((m) =>
-          m.id === userMsgId
-            ? { ...m, entities: data.entities }
-            : m
-        )
-        // Remove typing indicator
-        .filter((m) => m.id !== "typing")
-        // Add bot response
-        .concat({
-          id:        Date.now().toString(),
-          role:      "bot",
-          text:      data.reply,
-          timestamp: new Date(),
-          severity:  data.severity || null,
-        })
+        prev
+          .map((m) => m.id === userMsgId ? { ...m, entities: data.entities } : m)
+          .filter((m) => m.id !== "typing")
+          .concat({
+            id: Date.now().toString(),
+            role: "bot",
+            text: data.reply,
+            timestamp: new Date(),
+            severity: data.severity || null,
+          })
       );
-
     } catch {
       setMessages((prev) =>
         prev.filter((m) => m.id !== "typing").concat({
-          id:        Date.now().toString(),
-          role:      "bot",
-          text:      "Connection error. Please make sure the backend is running.",
+          id: Date.now().toString(),
+          role: "bot",
+          text: "Connection error. Please try again.",
           timestamp: new Date(),
         })
       );
@@ -123,10 +136,17 @@ export default function ChatPage() {
     }
   };
 
+  const sessionLabel = sessionId
+    ? `SESSION · ${sessionId.slice(0, 8).toUpperCase()}`
+    : backendReady
+    ? "INITIALIZING..."
+    : "CONNECTING...";
+
   return (
     <div style={{
       display: "flex", flexDirection: "column",
-      height: "100vh", background: "var(--bg-primary)",
+      height: "100vh",
+      background: "var(--bg-primary)",
       maxWidth: "760px", margin: "0 auto",
     }}>
 
@@ -135,63 +155,64 @@ export default function ChatPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          padding: "14px 20px",
+          padding: "10px 14px",
           borderBottom: "1px solid var(--border)",
           background: "var(--bg-secondary)",
-          display: "flex", alignItems: "center",
-          gap: "14px", flexShrink: 0,
+          flexShrink: 0,
         }}
       >
+        {/* Single responsive row */}
         <div style={{
-          width: "40px", height: "40px", borderRadius: "12px",
-          background: "rgba(0,201,167,0.1)",
-          border: "1px solid rgba(0,201,167,0.25)",
-          display: "flex", alignItems: "center",
-          justifyContent: "center", fontSize: "20px",
-        }}>🩺</div>
-
-        <div>
-          <h1 style={{
-            fontFamily: "'DM Serif Display'",
-            fontSize: "20px", fontWeight: 400,
-            color: "#dde8f0", letterSpacing: "-0.3px",
-          }}>
-            Arogya<span style={{ color: "#00c9a7", fontStyle: "italic" }}>Bot</span>
-          </h1>
-          <div style={{
-            fontFamily: "'JetBrains Mono'",
-            fontSize: "10px", color: "#1e6050", letterSpacing: "1.5px",
-          }}>
-            {sessionId
-              ? `SESSION · ${sessionId.slice(0, 8).toUpperCase()}`
-              : "INITIALIZING..."}
-          </div>
-        </div>
-
-        <div style={{
-          marginLeft: "auto",
-          display: "flex", alignItems: "center", gap: "12px",
+          display: "flex", alignItems: "center", gap: "10px",
         }}>
-          {/* Waveform — only shows when recording */}
-          <VoiceWaveform isActive={isRecording} />
+          {/* Logo icon */}
+          <div style={{
+            width: "34px", height: "34px", borderRadius: "9px",
+            background: "rgba(90,168,160,0.12)",
+            border: "1px solid rgba(90,168,160,0.25)",
+            display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: "16px",
+            flexShrink: 0,
+          }}>🩺</div>
 
-          {/* Language selector */}
-          <LanguageSelector selected={language} onChange={handleLanguageChange} />
+          {/* Title + session */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1 style={{
+              fontFamily: "'DM Serif Display'",
+              fontSize: "17px", fontWeight: 400,
+              color: "var(--text-primary)", letterSpacing: "-0.3px",
+              whiteSpace: "nowrap",
+            }}>
+              Arogya<span style={{ color: "var(--accent-teal)", fontStyle: "italic" }}>Bot</span>
+            </h1>
+            <div style={{
+              fontFamily: "'JetBrains Mono'",
+              fontSize: "8px", color: "var(--text-muted)",
+              letterSpacing: "0.8px",
+              whiteSpace: "nowrap", overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}>
+              {sessionLabel}
+            </div>
+          </div>
 
-          {/* Live dot */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          {/* Right controls */}
+          <div style={{
+            display: "flex", alignItems: "center",
+            gap: "6px", flexShrink: 0,
+          }}>
+            {isRecording && <VoiceWaveform isActive={isRecording} />}
+            <LanguageSelector selected={language} onChange={handleLanguageChange} />
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
               style={{
                 width: "6px", height: "6px",
-                borderRadius: "50%", background: "#00c9a7",
+                borderRadius: "50%",
+                background: backendReady ? "var(--accent-teal)" : "var(--accent-salmon)",
+                flexShrink: 0,
               }}
             />
-            <span style={{
-              fontFamily: "'JetBrains Mono'",
-              fontSize: "10px", color: "#1e6050",
-            }}>ONLINE</span>
           </div>
         </div>
       </motion.header>
@@ -201,21 +222,17 @@ export default function ChatPage() {
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
-
-         {/* ── MEDICINE SUGGESTIONS ── */}
-      {medicines.length > 0 && (
-        <MedicineCard medicines={medicines} />
+        {medicines.length > 0 && (
+          <MedicineCard medicines={medicines} />
         )}
         <div ref={bottomRef} />
       </div>
 
-     
-
-      {/* ── FACILITIES + DOWNLOAD ROW ── */}
+      {/* ── FACILITIES + DOWNLOAD ── */}
       <div style={{
         display: "flex", alignItems: "center",
         justifyContent: "space-between",
-        padding: "8px 20px",
+        padding: "8px 16px",
         borderTop: "1px solid var(--border)",
         background: "var(--bg-secondary)",
         flexShrink: 0,
@@ -233,10 +250,10 @@ export default function ChatPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          padding: "16px 20px",
+          padding: "12px 14px",
           borderTop: "1px solid var(--border)",
           background: "var(--bg-secondary)",
-          display: "flex", gap: "10px",
+          display: "flex", gap: "8px",
           alignItems: "center", flexShrink: 0,
         }}
       >
@@ -257,42 +274,49 @@ export default function ChatPage() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend(input)}
           placeholder={
-            language === "hi"
-              ? "अपने लक्षण बताएं..."
+            !sessionId
+              ? "Connecting..."
+              : language === "hi" ? "अपने लक्षण बताएं..."
+              : language === "as" ? "আপোনাৰ লক্ষণ কওক..."
               : "Describe your symptoms..."
           }
-          disabled={isLoading}
+          disabled={isLoading || !sessionId}
           style={{
             flex: 1,
-            background: "rgba(0,201,167,0.04)",
+            background: "rgba(90,168,160,0.05)",
             border: "1px solid var(--border)",
-            borderRadius: "22px", padding: "12px 18px",
-            color: "#dde8f0", fontFamily: "'Outfit'",
+            borderRadius: "22px", padding: "11px 16px",
+            color: "var(--text-primary)",
+            fontFamily: "'Outfit'",
             fontSize: "14px", outline: "none",
             transition: "border-color 0.2s",
           }}
-          onFocus={(e) => e.target.style.borderColor = "rgba(0,201,167,0.4)"}
+          onFocus={(e) => e.target.style.borderColor = "rgba(90,168,160,0.4)"}
           onBlur={(e)  => e.target.style.borderColor = "var(--border)"}
         />
 
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => handleSend(input)}
-          disabled={!input.trim() || isLoading}
+          disabled={!input.trim() || isLoading || !sessionId}
           style={{
-            width: "44px", height: "44px",
+            width: "42px", height: "42px",
             borderRadius: "50%",
-            background: input.trim() && !isLoading
-              ? "#00c9a7"
-              : "rgba(0,201,167,0.08)",
+            background: input.trim() && !isLoading && sessionId
+              ? "var(--accent-teal)"
+              : "rgba(90,168,160,0.08)",
             border: "none",
-            color: input.trim() && !isLoading ? "#070d0f" : "#1e4050",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: input.trim() && !isLoading ? "pointer" : "not-allowed",
+            color: input.trim() && !isLoading && sessionId
+              ? "#0d1515"
+              : "var(--text-muted)",
+            display: "flex", alignItems: "center",
+            justifyContent: "center",
+            cursor: input.trim() && !isLoading && sessionId
+              ? "pointer" : "not-allowed",
             transition: "all 0.2s", flexShrink: 0,
           }}
         >
-          <Send size={18} />
+          <Send size={17} />
         </motion.button>
       </motion.div>
     </div>
