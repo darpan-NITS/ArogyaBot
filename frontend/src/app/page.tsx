@@ -167,30 +167,42 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { icon: "🤖", title: "Llama-3 AI Triage",     desc: "Real LLM responses — understands context and asks follow-up questions.",        accent: true  },
-  { icon: "🎙️", title: "Voice in 9 Languages",  desc: "Web Speech API with Assamese, Hindi, Bengali, Tamil, Telugu and more.",         accent: false },
-  { icon: "🧠", title: "Medical NER",           desc: "Extracts symptoms, duration, severity words and body parts from free text.",     accent: false },
-  { icon: "🗺️", title: "Live Facility Finder",  desc: "OpenStreetMap powered. Shows real hospitals and PHCs near your GPS location.",  accent: false },
-  { icon: "💊", title: "Jan Aushadhi Generics", desc: "Generic medicine alternatives from PMBI database with savings up to 93%.",       accent: true  },
-  { icon: "📄", title: "PDF Health Report",     desc: "Downloadable summary with symptoms, severity, medicines and disclaimer.",        accent: false },
+  { icon: "🤖", title: "Llama-3 AI Triage",     desc: "Real LLM responses — understands context and asks follow-up questions.",       accent: true  },
+  { icon: "🎙️", title: "Voice in 9 Languages",  desc: "Web Speech API with Assamese, Hindi, Bengali, Tamil, Telugu and more.",        accent: false },
+  { icon: "🧠", title: "Medical NER",           desc: "Extracts symptoms, duration, severity words and body parts from free text.",    accent: false },
+  { icon: "🗺️", title: "Live Facility Finder",  desc: "OpenStreetMap powered. Shows real hospitals and PHCs near your GPS location.", accent: false },
+  { icon: "💊", title: "Jan Aushadhi Generics", desc: "Generic medicine alternatives from PMBI database with savings up to 93%.",      accent: true  },
+  { icon: "📄", title: "PDF Health Report",     desc: "Downloadable summary with symptoms, severity, medicines and disclaimer.",       accent: false },
 ];
 
 const LANG_LIST = [
-  { name: "English",  script: "English"   },
-  { name: "हिन्दी",   script: "Hindi"     },
-  { name: "অসমীয়া", script: "Assamese"  },
-  { name: "বাংলা",   script: "Bengali"   },
-  { name: "తెలుగు",  script: "Telugu"    },
-  { name: "தமிழ்",   script: "Tamil"     },
-  { name: "मराठी",   script: "Marathi"   },
-  { name: "ಕನ್ನಡ",   script: "Kannada"   },
-  { name: "ગુજરાતી", script: "Gujarati"  },
+  { name: "English",  script: "English"  },
+  { name: "हिन्दी",   script: "Hindi"    },
+  { name: "অসমীয়া", script: "Assamese" },
+  { name: "বাংলা",   script: "Bengali"  },
+  { name: "తెలుగు",  script: "Telugu"   },
+  { name: "தமிழ்",   script: "Tamil"    },
+  { name: "मराठी",   script: "Marathi"  },
+  { name: "ಕನ್ನಡ",   script: "Kannada"  },
+  { name: "ગુજરાતી", script: "Gujarati" },
 ];
 
 export default function LandingPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => setMounted(true), []);
+
+  // ← THE SCROLL FIX
+  useEffect(() => {
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+    return () => {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    };
+  }, []);
+
   if (!mounted) return null;
 
   return (
@@ -200,7 +212,6 @@ export default function LandingPage() {
       color: "#dde8f0",
       fontFamily: "'Outfit', sans-serif",
       overflowX: "hidden",
-      overflowY: "auto",
     }}>
       {/* Grid bg */}
       <div style={{
@@ -408,7 +419,6 @@ export default function LandingPage() {
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: "0",
             }}>
               {STEPS.map((s, i) => (
                 <div
@@ -516,7 +526,6 @@ export default function LandingPage() {
           gridTemplateColumns: "1fr 2fr",
           gap: "16px", marginBottom: "16px",
         }}>
-          {/* Emergency */}
           <RevealCard delay={0.05} style={{ height: "100%" }}>
             <div style={{
               background: "rgba(255,107,107,0.04)",
@@ -551,7 +560,6 @@ export default function LandingPage() {
             </div>
           </RevealCard>
 
-          {/* CTA */}
           <RevealCard delay={0.1} style={{ height: "100%" }}>
             <div style={{
               background: "rgba(0,201,167,0.04)",
