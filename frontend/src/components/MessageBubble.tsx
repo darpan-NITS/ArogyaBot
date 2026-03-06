@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import { Message, MedicalEntities } from "@/types/chat";
+import { Message } from "@/types/chat";
+import { MedicalEntities } from "@/types/chat";
 import SeverityBadge from "./SeverityBadge";
 import EntityTags from "./EntityTags";
 
@@ -13,9 +14,11 @@ export default function MessageBubble({ message }: { message: Message }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       style={{
-        display: "flex", flexDirection: "column",
+        display: "flex",
+        flexDirection: "column",
         alignItems: isUser ? "flex-end" : "flex-start",
-        marginBottom: "16px", padding: "0 16px",
+        marginBottom: "16px",
+        padding: "0 16px",
       }}
     >
       <div style={{
@@ -23,11 +26,13 @@ export default function MessageBubble({ message }: { message: Message }) {
         justifyContent: isUser ? "flex-end" : "flex-start",
         width: "100%",
       }}>
+        {/* Bot avatar */}
         {!isUser && (
           <div style={{
-            width: "32px", height: "32px", borderRadius: "50%",
-            background: "rgba(91,168,160,0.1)",
-            border: "1px solid rgba(91,168,160,0.25)",
+            width: "32px", height: "32px",
+            borderRadius: "50%",
+            background: "rgba(0,201,167,0.1)",
+            border: "1px solid rgba(0,201,167,0.3)",
             display: "flex", alignItems: "center",
             justifyContent: "center",
             fontSize: "14px", marginRight: "10px",
@@ -36,58 +41,67 @@ export default function MessageBubble({ message }: { message: Message }) {
         )}
 
         <div style={{
-          maxWidth: "72%", display: "flex",
-          flexDirection: "column", gap: "6px",
+          maxWidth: "72%",
+          display: "flex",
+          flexDirection: "column",
+          gap: "6px",
         }}>
+          {/* Severity badge for bot messages */}
           {!isUser && message.severity && (
             <SeverityBadge level={message.severity} />
           )}
 
+          {/* Bubble */}
           <div style={{
             background: isUser
-              ? "rgba(91,168,160,0.1)"
-              : "rgba(17,30,30,0.95)",
+              ? "rgba(0,201,167,0.12)"
+              : "rgba(15, 32, 40, 0.9)",
             border: isUser
-              ? "1px solid rgba(91,168,160,0.22)"
-              : "1px solid var(--border)",
+              ? "1px solid rgba(0,201,167,0.25)"
+              : "1px solid #0e2530",
             borderRadius: isUser
               ? "18px 18px 4px 18px"
               : "18px 18px 18px 4px",
             padding: "12px 16px",
           }}>
+            {/* Typing indicator */}
             {message.isTyping ? (
               <TypingDots />
             ) : (
               <p style={{
                 fontFamily: "'Outfit'",
                 fontSize: "14px",
-                color: isUser
-                  ? "var(--text-primary)"
-                  : "var(--text-secondary)",
-                lineHeight: 1.65, margin: 0,
+                color: isUser ? "#dde8f0" : "#aac4d0",
+                lineHeight: 1.65,
+                margin: 0,
               }}>
                 {message.text}
               </p>
             )}
           </div>
 
+          {/* Timestamp */}
           <span style={{
-            fontFamily: "'JetBrains Mono'", fontSize: "10px",
-            color: "var(--text-muted)",
+            fontFamily: "'JetBrains Mono'",
+            fontSize: "10px",
+            color: "#1e4050",
             alignSelf: isUser ? "flex-end" : "flex-start",
           }}>
             {message.timestamp.toLocaleTimeString([], {
-              hour: "2-digit", minute: "2-digit",
+              hour: "2-digit", minute: "2-digit"
             })}
           </span>
         </div>
       </div>
 
+      {/* Entity tags — show under user messages */}
       {isUser && message.entities &&
         (message.entities as MedicalEntities).symptoms?.length > 0 && (
           <div style={{
-            width: "100%", display: "flex",
-            justifyContent: "flex-end", marginTop: "4px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "4px",
           }}>
             <EntityTags entities={message.entities as MedicalEntities} />
           </div>
@@ -107,8 +121,7 @@ function TypingDots() {
           key={i}
           style={{
             width: "6px", height: "6px",
-            borderRadius: "50%",
-            background: "var(--accent-teal)",
+            borderRadius: "50%", background: "#00c9a7",
           }}
           animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
           transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
