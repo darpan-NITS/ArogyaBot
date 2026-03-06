@@ -37,6 +37,13 @@ SYMPTOMS = {
     # Hindi/Indian colloquial terms mapped
     "bukhar", "sar dard", "pet dard", "khasi", "ulti", "chakkar",
     "kamzori", "thakaan", "sir dard", "pet mein dard",
+
+    # Assamese terms
+"jor", "jwor", "hutia", "hutiya",
+"mathar bikh", "petor bikh",
+"kah", "durbolota", "bomi",
+"pani loga", "muror bikh",
+ "mathar bix", "muror bix","petor bix"   
 }
 
 DURATION_PATTERNS = [
