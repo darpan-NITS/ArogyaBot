@@ -31,7 +31,7 @@ def detect_language(text: str) -> str:
     try:
         from langdetect import detect
         lang = detect(text)
-        return lang if lang in ["hi", "bn", "te", "ta", "mr", "gu", "kn"] else "en"
+        return lang if lang in ["hi", "bn", "te", "ta", "mr", "gu", "kn","as"] else "en"
     except:
         return "en"
 
