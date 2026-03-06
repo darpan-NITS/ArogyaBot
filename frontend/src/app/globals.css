@@ -5,79 +5,49 @@
 }
 
 :root {
-  --bg-primary:     #0d1515;
-  --bg-secondary:   #111e1e;
-  --accent-teal:    #5ba8a0;
-  --accent-salmon:  #e0876a;
-  --accent-almond:  #e8d5b8;
-  --text-primary:   #e8d5b8;
-  --text-secondary: #8aafa8;
-  --text-muted:     #3a6660;
-  --border:         #1a2e2d;
+  --bg-primary:   #070d0f;
+  --bg-secondary: #0c1a1f;
+  --accent:       #00c9a7;
+  --border:       #0e2530;
+  --text:         #dde8f0;
 }
 
 html, body {
   height: 100%;
   overflow: hidden;
-  color: var(--text-primary);
+  background: #070d0f;
+  color: #dde8f0;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Health clinic background */
-body {
-  background-color: #0d1515;
-  background-image:
-    linear-gradient(rgba(13,21,21,0.92), rgba(13,21,21,0.96)),
-    url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80&auto=format");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* Scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1a2e2d; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #2a4a48; }
+::-webkit-scrollbar-thumb { background: #0e2530; border-radius: 2px; }
 
-/* Selection */
 ::selection {
-  background: rgba(91,168,160,0.2);
-  color: var(--text-primary);
+  background: rgba(0,201,167,0.2);
+  color: #dde8f0;
 }
 
-/* Leaflet dark theme */
 .leaflet-container {
-  background: #0a1818 !important;
+  background: #0a1520 !important;
   font-family: 'Outfit', sans-serif !important;
 }
 .leaflet-tile {
-  filter: brightness(0.8) saturate(0.7) hue-rotate(150deg);
+  filter: brightness(0.85) saturate(0.8);
 }
 .leaflet-popup-content-wrapper {
-  background: #111e1e !important;
-  border: 1px solid #1a2e2d !important;
-  color: var(--text-primary) !important;
+  background: #0c1a1f !important;
+  border: 1px solid #0e2530 !important;
+  color: #dde8f0 !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
 }
-.leaflet-popup-tip {
-  background: #111e1e !important;
-}
+.leaflet-popup-tip { background: #0c1a1f !important; }
 .leaflet-control-zoom a {
-  background: #111e1e !important;
-  border-color: #1a2e2d !important;
-  color: var(--accent-teal) !important;
+  background: #0c1a1f !important;
+  border-color: #0e2530 !important;
+  color: #00c9a7 !important;
 }
 
-/* Mobile tap highlight */
 * { -webkit-tap-highlight-color: transparent; }
-
-/* PWA safe areas */
-@supports (padding: max(0px)) {
-  body {
-    padding-top:    env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
