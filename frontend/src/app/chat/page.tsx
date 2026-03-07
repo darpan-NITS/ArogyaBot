@@ -15,7 +15,7 @@ import { sendMessage, createSession } from "@/lib/api";
 const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "bot",
-  text: "Namaste 🙏 I'm ArogyaBot. Tell me what symptoms you're experiencing — type or speak in your language. I'll help assess your condition and find the nearest health facility.",
+  text: "Namaste 🙏 I'm ArogyaBot, an AI health assistant built by Darpan.Tell me what symptoms you're experiencing — type or speak in your language. I'll help assess your condition and find the nearest health facility.",
   timestamp: new Date(),
   severity: null,
 };
@@ -267,7 +267,7 @@ export default function ChatPage() {
               textAlign: "center", flexShrink: 0,
             }}
           >
-            ❌ Server offline — please refresh the page
+            ❌ Server is offline — please refresh the page
           </motion.div>
         )}
 
