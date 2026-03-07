@@ -1,5 +1,3 @@
-entityTags.tsx:
-
 import { MedicalEntities } from "@/types/chat";
 
 interface Props {
