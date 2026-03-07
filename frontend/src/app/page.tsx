@@ -348,7 +348,7 @@ export default function LandingPage() {
               maxWidth: "500px", lineHeight: 1.7,
               marginBottom: "40px",
             }}>
-              AI triage for India&apos;s 900M underserved. Describe your symptoms simply
+              An AI health-support bot built by Darpan. Describe your symptoms simply
               by voice or text in 9 languages — get instant assessment,
               nearby facilities, and generic medicine alternatives.
             </p>
@@ -635,7 +635,7 @@ export default function LandingPage() {
               fontFamily: "'JetBrains Mono'",
               fontSize: "9px", color: "#1e3a4a", letterSpacing: "1.5px",
             }}>
-              NOT A SUBSTITUTE FOR MEDICAL ADVICE · BUILT FOR INDIA
+              NOT A SUBSTITUTE FOR MEDICAL ADVICE · BUILT FOR INDIA , BY DARPAN
             </span>
             <motion.button
               whileHover={{ color: "#00c9a7" }}
