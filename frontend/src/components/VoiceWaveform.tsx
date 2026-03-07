@@ -16,8 +16,8 @@ export default function VoiceWaveform({ isActive }: Props) {
           style={{
             display: "flex", alignItems: "center",
             gap: "3px", padding: "6px 12px",
-            background: "rgba(255,107,107,0.08)",
-            border: "1px solid rgba(255,107,107,0.2)",
+            background: "rgba(155,28,28,0.07)",
+            border: "1px solid rgba(155,28,28,0.20)",
             borderRadius: "20px",
           }}
         >
@@ -34,14 +34,14 @@ export default function VoiceWaveform({ isActive }: Props) {
               }}
               style={{
                 width: "3px", height: "16px",
-                background: "#ff6b6b", borderRadius: "2px",
+                background: "#9B1C1C", borderRadius: "2px",
                 transformOrigin: "center",
               }}
             />
           ))}
           <span style={{
-            fontFamily: "'JetBrains Mono'",
-            fontSize: "9px", color: "#ff6b6b",
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "9px", color: "#9B1C1C",
             letterSpacing: "1.5px", marginLeft: "6px",
           }}>
             REC
