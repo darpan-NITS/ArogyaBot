@@ -320,7 +320,7 @@ export default function LandingPage() {
                 fontFamily: "'JetBrains Mono'",
                 fontSize: "10px", color: "#00c9a7", letterSpacing: "1.5px",
               }}>
-                LIVE · FREE · OPEN SOURCE
+                LIVE · FREE · EASY TO USE
               </span>
             </div>
 
@@ -348,7 +348,7 @@ export default function LandingPage() {
               maxWidth: "500px", lineHeight: 1.7,
               marginBottom: "40px",
             }}>
-              AI triage for India&apos;s 900M underserved. Describe symptoms
+              AI triage for India&apos;s 900M underserved. Describe your symptoms simply
               by voice or text in 9 languages — get instant assessment,
               nearby facilities, and generic medicine alternatives.
             </p>
@@ -368,7 +368,7 @@ export default function LandingPage() {
                   boxShadow: "0 0 30px rgba(0,201,167,0.15)",
                 }}
               >
-                START TRIAGE →
+                START CHAT →
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -384,7 +384,7 @@ export default function LandingPage() {
                   color: "#4a7a8a",
                 }}
               >
-                GITHUB ↗
+                GITHUB REPO ↗
               </motion.button>
             </div>
           </div>
@@ -485,7 +485,7 @@ export default function LandingPage() {
               fontSize: "10px", color: "#1e6050",
               letterSpacing: "2px", marginBottom: "28px",
             }}>
-              SUPPORTED LANGUAGES
+              VARIOUS SUPPORTED LANGUAGES
             </div>
             <div style={{
               display: "flex", flexWrap: "wrap",
@@ -610,7 +610,7 @@ export default function LandingPage() {
                   color: "#070d0f", fontWeight: 700,
                 }}
               >
-                START TRIAGE →
+                START YOUR 1st CHAT →
               </motion.button>
             </div>
           </RevealCard>
