@@ -1,3 +1,5 @@
+entityTags.tsx:
+
 import { MedicalEntities } from "@/types/chat";
 
 interface Props {
@@ -16,11 +18,11 @@ export default function EntityTags({ entities }: Props) {
       {/* Symptoms */}
       {entities.symptoms?.map((s, i) => (
         <span key={i} style={{
-          background: "rgba(0,201,167,0.08)",
-          border: "1px solid rgba(0,201,167,0.2)",
-          color: "#00c9a7", borderRadius: "4px",
+          background: "rgba(224,123,57,0.09)",
+          border: "1px solid rgba(224,123,57,0.25)",
+          color: "#C96828", borderRadius: "4px",
           padding: "2px 8px",
-          fontFamily: "'JetBrains Mono'",
+          fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px", letterSpacing: "0.5px",
         }}>
           🔴 {s}
@@ -30,11 +32,11 @@ export default function EntityTags({ entities }: Props) {
       {/* Duration */}
       {entities.duration && (
         <span style={{
-          background: "rgba(255,209,102,0.08)",
-          border: "1px solid rgba(255,209,102,0.2)",
-          color: "#ffd166", borderRadius: "4px",
+          background: "rgba(176,125,42,0.09)",
+          border: "1px solid rgba(176,125,42,0.25)",
+          color: "#B07D2A", borderRadius: "4px",
           padding: "2px 8px",
-          fontFamily: "'JetBrains Mono'",
+          fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px",
         }}>
           ⏱ {entities.duration}
@@ -44,11 +46,11 @@ export default function EntityTags({ entities }: Props) {
       {/* Body parts */}
       {entities.body_parts?.map((p, i) => (
         <span key={i} style={{
-          background: "rgba(167,139,250,0.08)",
-          border: "1px solid rgba(167,139,250,0.2)",
-          color: "#a78bfa", borderRadius: "4px",
+          background: "rgba(92,45,110,0.08)",
+          border: "1px solid rgba(92,45,110,0.20)",
+          color: "#5C2D6E", borderRadius: "4px",
           padding: "2px 8px",
-          fontFamily: "'JetBrains Mono'",
+          fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px",
         }}>
           📍 {p}
@@ -58,11 +60,11 @@ export default function EntityTags({ entities }: Props) {
       {/* Age */}
       {entities.age && (
         <span style={{
-          background: "rgba(59,158,255,0.08)",
-          border: "1px solid rgba(59,158,255,0.2)",
-          color: "#3b9eff", borderRadius: "4px",
+          background: "rgba(45,122,79,0.08)",
+          border: "1px solid rgba(45,122,79,0.20)",
+          color: "#2D7A4F", borderRadius: "4px",
           padding: "2px 8px",
-          fontFamily: "'JetBrains Mono'",
+          fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px",
         }}>
           👤 Age {entities.age}
