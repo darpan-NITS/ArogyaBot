@@ -26,22 +26,23 @@ export default function MedicineCard({ medicines }: Props) {
       animate={{ opacity: 1, y: 0 }}
       style={{
         margin: "8px 16px",
-        background: "#0a1520",
-        border: "1px solid #0e2530",
+        background: "#F2EDE6",
+        border: "1px solid #DDD4C4",
         borderRadius: "12px",
         overflow: "hidden",
       }}
     >
       {/* Header */}
       <div style={{
-        padding: "12px 16px",
-        borderBottom: "1px solid #0e2530",
+        padding: "11px 16px",
+        borderBottom: "1px solid #DDD4C4",
         display: "flex", alignItems: "center", gap: "8px",
+        background: "rgba(224,123,57,0.05)",
       }}>
         <span style={{ fontSize: "14px" }}>💊</span>
         <span style={{
-          fontFamily: "'JetBrains Mono'",
-          fontSize: "10px", color: "#00c9a7", letterSpacing: "1.5px",
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: "9px", color: "#E07B39", letterSpacing: "1.5px",
         }}>
           JAN AUSHADHI GENERIC ALTERNATIVES
         </span>
@@ -55,45 +56,46 @@ export default function MedicineCard({ medicines }: Props) {
             gridTemplateColumns: "1fr auto",
             gap: "8px",
             padding: "10px 8px",
-            borderBottom: i < medicines.length - 1 ? "1px solid #0a1a24" : "none",
+            borderBottom: i < Math.min(medicines.length, 4) - 1
+              ? "1px solid #EAE2D8" : "none",
             alignItems: "center",
           }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "3px" }}>
                 <span style={{
-                  fontFamily: "'Outfit'", fontSize: "13px",
-                  color: "#c8daea", fontWeight: 500,
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: "13px", color: "#1C1208", fontWeight: 500,
                 }}>{med.brand}</span>
                 <span style={{
-                  fontFamily: "'JetBrains Mono'", fontSize: "9px",
-                  color: "#1e4060",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "9px", color: "#9A8472",
                 }}>→</span>
                 <span style={{
-                  fontFamily: "'JetBrains Mono'", fontSize: "10px",
-                  color: "#00c9a7",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "10px", color: "#E07B39",
                 }}>{med.generic}</span>
               </div>
               <div style={{
-                fontFamily: "'Outfit'", fontSize: "11px",
-                color: "#1e4060",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontSize: "11px", color: "#9A8472",
               }}>{med.use}</div>
             </div>
 
             <div style={{ textAlign: "right" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
-                <TrendingDown size={11} color="#00c9a7" />
+                <TrendingDown size={11} color="#2D7A4F" />
                 <span style={{
-                  fontFamily: "'JetBrains Mono'", fontSize: "11px",
-                  color: "#00c9a7", fontWeight: 500,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "11px", color: "#2D7A4F", fontWeight: 500,
                 }}>{med.savings_pct}% off</span>
               </div>
               <div style={{
-                fontFamily: "'JetBrains Mono'", fontSize: "9px",
-                color: "#1e4060",
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: "9px", color: "#9A8472",
               }}>
                 <span style={{ textDecoration: "line-through" }}>₹{med.price_brand}</span>
                 {" → "}
-                <span style={{ color: "#6dceaa" }}>₹{med.price_generic}</span>
+                <span style={{ color: "#2D7A4F" }}>₹{med.price_generic}</span>
               </div>
             </div>
           </div>
@@ -103,10 +105,10 @@ export default function MedicineCard({ medicines }: Props) {
       {/* Disclaimer */}
       <div style={{
         padding: "8px 16px",
-        borderTop: "1px solid #0a1a24",
-        fontFamily: "'JetBrains Mono'",
-        fontSize: "9px", color: "#1e3a50",
-        letterSpacing: "0.5px",
+        borderTop: "1px solid #EAE2D8",
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: "9px", color: "#9A8472",
+        letterSpacing: "0.3px",
       }}>
         ⚠ Always consult a doctor before taking any medicine
       </div>
