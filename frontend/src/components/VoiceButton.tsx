@@ -13,11 +13,11 @@ interface Props {
 }
 
 const statusConfig = {
-  idle:        { color: "#00c9a7", bg: "rgba(0,201,167,0.08)",   border: "rgba(0,201,167,0.3)" },
-  listening:   { color: "#ff6b6b", bg: "rgba(255,107,107,0.12)", border: "#ff6b6b" },
-  processing:  { color: "#ffd166", bg: "rgba(255,209,102,0.12)", border: "rgba(255,209,102,0.4)" },
-  error:       { color: "#ff6b6b", bg: "rgba(255,107,107,0.08)", border: "rgba(255,107,107,0.3)" },
-  unsupported: { color: "#444",    bg: "rgba(0,0,0,0.1)",        border: "#222" },
+  idle:        { color: "#E07B39", bg: "rgba(224,123,57,0.08)",  border: "rgba(224,123,57,0.30)" },
+  listening:   { color: "#9B1C1C", bg: "rgba(155,28,28,0.10)",   border: "#9B1C1C"               },
+  processing:  { color: "#B07D2A", bg: "rgba(176,125,42,0.10)",  border: "rgba(176,125,42,0.40)" },
+  error:       { color: "#9B1C1C", bg: "rgba(155,28,28,0.07)",   border: "rgba(155,28,28,0.30)"  },
+  unsupported: { color: "#9A8472", bg: "rgba(154,132,114,0.08)", border: "#DDD4C4"               },
 };
 
 export default function VoiceButton({
@@ -31,10 +31,10 @@ export default function VoiceButton({
       onTranscript(text);
       toast.success(`🎙️ "${text}"`, {
         style: {
-          background: "#0c1a1f",
-          border: "1px solid rgba(0,201,167,0.3)",
-          color: "#dde8f0",
-          fontFamily: "Outfit",
+          background: "#FAFAF7",
+          border: "1px solid rgba(224,123,57,0.25)",
+          color: "#1C1208",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontSize: "13px",
         },
       });
@@ -47,9 +47,9 @@ export default function VoiceButton({
     if (errorMsg) {
       toast.error(errorMsg, {
         style: {
-          background: "#0c1a1f",
-          border: "1px solid rgba(255,107,107,0.3)",
-          color: "#dde8f0",
+          background: "#FAFAF7",
+          border: "1px solid rgba(155,28,28,0.25)",
+          color: "#1C1208",
         },
       });
     }
@@ -76,7 +76,7 @@ export default function VoiceButton({
           : "Click to speak"
         }
         style={{
-          width: "44px", height: "44px",
+          width: "42px", height: "42px",
           borderRadius: "50%",
           border: `1px solid ${cfg.border}`,
           background: cfg.bg,
@@ -85,7 +85,7 @@ export default function VoiceButton({
           cursor: disabled ? "not-allowed" : "pointer",
           flexShrink: 0, position: "relative",
           transition: "all 0.2s",
-          opacity: disabled ? 0.5 : 1,
+          opacity: disabled ? 0.45 : 1,
         }}
       >
         <AnimatePresence>
@@ -99,7 +99,7 @@ export default function VoiceButton({
                   transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
                   style={{
                     position: "absolute", inset: 0,
-                    borderRadius: "50%", border: "1px solid #ff6b6b",
+                    borderRadius: "50%", border: "1px solid #9B1C1C",
                   }}
                 />
               ))}
@@ -134,8 +134,8 @@ export default function VoiceButton({
               bottom: "-22px", left: "50%",
               transform: "translateX(-50%)",
               whiteSpace: "nowrap",
-              fontFamily: "'JetBrains Mono'",
-              fontSize: "9px", color: "#ff6b6b", letterSpacing: "1px",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px", color: "#9B1C1C", letterSpacing: "1px",
             }}
           >
             LISTENING...
