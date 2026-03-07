@@ -26,7 +26,6 @@ export default function FindFacilitiesButton() {
     setError("");
 
     try {
-      // Get user location
       const position = await new Promise<GeolocationPosition>((res, rej) =>
         navigator.geolocation.getCurrentPosition(res, rej, {
           timeout: 10000, enableHighAccuracy: true,
@@ -38,7 +37,6 @@ export default function FindFacilitiesButton() {
       setUserLat(lat);
       setUserLng(lng);
 
-      // Fetch facilities from backend
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/facilities?lat=${lat}&lng=${lng}&radius_km=10&limit=6`
       );
@@ -59,11 +57,11 @@ export default function FindFacilitiesButton() {
 
   return (
     <>
-      <div style={{ padding: "8px 16px 16px" }}>
+      <div>
         {error && (
           <div style={{
-            fontFamily: "'JetBrains Mono'", fontSize: "10px",
-            color: "#ff6b6b", marginBottom: "8px", textAlign: "center",
+            fontFamily: "'JetBrains Mono', monospace", fontSize: "10px",
+            color: "#9B1C1C", marginBottom: "6px",
           }}>{error}</div>
         )}
         <motion.button
@@ -71,28 +69,27 @@ export default function FindFacilitiesButton() {
           onClick={findFacilities}
           disabled={loading}
           style={{
-            width: "100%", padding: "12px",
-            background: "rgba(0,201,167,0.06)",
-            border: "1px solid rgba(0,201,167,0.2)",
-            borderRadius: "12px", cursor: loading ? "wait" : "pointer",
+            padding: "7px 14px",
+            background: "rgba(224,123,57,0.07)",
+            border: "1px solid rgba(224,123,57,0.25)",
+            borderRadius: "8px", cursor: loading ? "wait" : "pointer",
             display: "flex", alignItems: "center",
-            justifyContent: "center", gap: "8px",
-            transition: "all 0.2s",
+            gap: "7px", transition: "all 0.2s",
           }}
         >
           {loading ? (
             <motion.div animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-              <Loader2 size={16} color="#00c9a7" />
+              <Loader2 size={14} color="#E07B39" />
             </motion.div>
           ) : (
-            <MapPin size={16} color="#00c9a7" />
+            <MapPin size={14} color="#E07B39" />
           )}
           <span style={{
-            fontFamily: "'JetBrains Mono'", fontSize: "11px",
-            color: "#00c9a7", letterSpacing: "1px",
+            fontFamily: "'JetBrains Mono', monospace", fontSize: "10px",
+            color: "#E07B39", letterSpacing: "0.8px",
           }}>
-            {loading ? "FINDING NEARBY FACILITIES..." : "FIND NEARBY HOSPITALS & CLINICS"}
+            {loading ? "FINDING..." : "FIND HOSPITALS & CLINICS"}
           </span>
         </motion.button>
       </div>
