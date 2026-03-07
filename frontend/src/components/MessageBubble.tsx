@@ -14,11 +14,9 @@ export default function MessageBubble({ message }: { message: Message }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
       style={{
-        display: "flex",
-        flexDirection: "column",
+        display: "flex", flexDirection: "column",
         alignItems: isUser ? "flex-end" : "flex-start",
-        marginBottom: "16px",
-        padding: "0 16px",
+        marginBottom: "16px", padding: "0 16px",
       }}
     >
       <div style={{
@@ -31,8 +29,8 @@ export default function MessageBubble({ message }: { message: Message }) {
           <div style={{
             width: "32px", height: "32px",
             borderRadius: "50%",
-            background: "rgba(0,201,167,0.1)",
-            border: "1px solid rgba(0,201,167,0.3)",
+            background: "rgba(224,123,57,0.10)",
+            border: "1px solid rgba(224,123,57,0.25)",
             display: "flex", alignItems: "center",
             justifyContent: "center",
             fontSize: "14px", marginRight: "10px",
@@ -41,67 +39,57 @@ export default function MessageBubble({ message }: { message: Message }) {
         )}
 
         <div style={{
-          maxWidth: "72%",
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
+          maxWidth: "72%", display: "flex",
+          flexDirection: "column", gap: "6px",
         }}>
-          {/* Severity badge for bot messages */}
           {!isUser && message.severity && (
             <SeverityBadge level={message.severity} />
           )}
 
           {/* Bubble */}
           <div style={{
-            background: isUser
-              ? "rgba(0,201,167,0.12)"
-              : "rgba(15, 32, 40, 0.9)",
-            border: isUser
-              ? "1px solid rgba(0,201,167,0.25)"
-              : "1px solid #0e2530",
+            background: isUser ? "#E07B39" : "#F2EDE6",
+            border: isUser ? "none" : "1px solid #DDD4C4",
             borderRadius: isUser
               ? "18px 18px 4px 18px"
               : "18px 18px 18px 4px",
             padding: "12px 16px",
+            boxShadow: isUser
+              ? "0 2px 12px rgba(224,123,57,0.22)"
+              : "0 1px 4px rgba(92,45,110,0.05)",
           }}>
-            {/* Typing indicator */}
             {message.isTyping ? (
               <TypingDots />
             ) : (
               <p style={{
-                fontFamily: "'Outfit'",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: "14px",
-                color: isUser ? "#dde8f0" : "#aac4d0",
-                lineHeight: 1.65,
-                margin: 0,
+                color: isUser ? "#FAFAF7" : "#4A3728",
+                lineHeight: 1.65, margin: 0,
               }}>
                 {message.text}
               </p>
             )}
           </div>
 
-          {/* Timestamp */}
           <span style={{
-            fontFamily: "'JetBrains Mono'",
-            fontSize: "10px",
-            color: "#1e4050",
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "10px", color: "#9A8472",
             alignSelf: isUser ? "flex-end" : "flex-start",
           }}>
             {message.timestamp.toLocaleTimeString([], {
-              hour: "2-digit", minute: "2-digit"
+              hour: "2-digit", minute: "2-digit",
             })}
           </span>
         </div>
       </div>
 
-      {/* Entity tags — show under user messages */}
+      {/* Entity tags */}
       {isUser && message.entities &&
         (message.entities as MedicalEntities).symptoms?.length > 0 && (
           <div style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "4px",
+            width: "100%", display: "flex",
+            justifyContent: "flex-end", marginTop: "4px",
           }}>
             <EntityTags entities={message.entities as MedicalEntities} />
           </div>
@@ -121,7 +109,7 @@ function TypingDots() {
           key={i}
           style={{
             width: "6px", height: "6px",
-            borderRadius: "50%", background: "#00c9a7",
+            borderRadius: "50%", background: "#E07B39",
           }}
           animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
           transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
