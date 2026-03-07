@@ -1,3 +1,5 @@
+chat/page.tsx:
+
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -128,9 +130,9 @@ export default function ChatPage() {
     }
   };
 
-  const dotColor = sessionId ? "#00c9a7"
-    : status === "OFFLINE" ? "#ff6b6b"
-    : "#ffd166";
+  const dotColor = sessionId ? "#2D7A4F"
+    : status === "OFFLINE"   ? "#9B1C1C"
+    : "#B07D2A";
 
   const headerLabel = sessionId
     ? `SESSION · ${sessionId.slice(0, 8).toUpperCase()}`
@@ -138,16 +140,15 @@ export default function ChatPage() {
 
   return (
     <>
-      {/* ── MOBILE-SAFE GLOBAL STYLE ── */}
       <style>{`
         * { box-sizing: border-box; }
-        html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; background: #FAFAF7; }
         #chat-root { height: 100dvh; }
         @media (max-width: 480px) {
-          .header-title  { font-size: 15px !important; }
+          .header-title   { font-size: 15px !important; }
           .header-session { font-size: 8px !important; letter-spacing: 0.5px !important; }
-          .bottom-row { padding: 6px 10px !important; }
-          .input-bar  { padding: 10px 10px !important; gap: 6px !important; }
+          .bottom-row     { padding: 6px 10px !important; }
+          .input-bar      { padding: 10px !important; gap: 6px !important; }
         }
       `}</style>
 
@@ -155,61 +156,57 @@ export default function ChatPage() {
         id="chat-root"
         style={{
           display: "flex", flexDirection: "column",
-          height: "100dvh",           /* dvh = dynamic viewport height, fixes mobile browser bars */
-          background: "#070d0f",
+          height: "100dvh",
+          background: "#FAFAF7",
           maxWidth: "760px", margin: "0 auto",
           overflow: "hidden",
         }}
       >
-
         {/* ── HEADER ── */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
-            padding: "8px 12px",
-            borderBottom: "1px solid #0e2530",
-            background: "#0c1a1f",
+            padding: "10px 14px",
+            borderBottom: "1px solid #DDD4C4",
+            background: "#F2EDE6",
             flexShrink: 0,
+            boxShadow: "0 1px 8px rgba(92,45,110,0.05)",
           }}
         >
           <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            width: "100%",
-            minWidth: 0,
+            display: "flex", alignItems: "center",
+            gap: "10px", width: "100%", minWidth: 0,
           }}>
-
             {/* Logo */}
             <div style={{
-              width: "32px", height: "32px",
-              borderRadius: "9px", flexShrink: 0,
-              background: "rgba(0,201,167,0.1)",
-              border: "1px solid rgba(0,201,167,0.25)",
+              width: "34px", height: "34px",
+              borderRadius: "10px", flexShrink: 0,
+              background: "rgba(224,123,57,0.12)",
+              border: "1px solid rgba(224,123,57,0.28)",
               display: "flex", alignItems: "center",
-              justifyContent: "center", fontSize: "16px",
+              justifyContent: "center", fontSize: "17px",
             }}>🩺</div>
 
-            {/* Title + session — takes all remaining space, truncates */}
+            {/* Title + session */}
             <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
               <h1
                 className="header-title"
                 style={{
-                  fontFamily: "'DM Serif Display'",
-                  fontSize: "17px", fontWeight: 400,
-                  color: "#dde8f0", letterSpacing: "-0.3px",
+                  fontFamily: "'Fraunces', serif",
+                  fontSize: "18px", fontWeight: 600,
+                  color: "#1C1208", letterSpacing: "-0.3px",
                   margin: 0, whiteSpace: "nowrap",
                   overflow: "hidden", textOverflow: "ellipsis",
                 }}
               >
-                Arogya<span style={{ color: "#00c9a7", fontStyle: "italic" }}>Bot</span>
+                Arogya<span style={{ color: "#E07B39", fontStyle: "italic" }}>Bot</span>
               </h1>
               <div
                 className="header-session"
                 style={{
-                  fontFamily: "'JetBrains Mono'",
-                  fontSize: "8px", color: "#1e6050",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "8px", color: "#9A8472",
                   letterSpacing: "0.8px",
                   whiteSpace: "nowrap", overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -219,27 +216,18 @@ export default function ChatPage() {
               </div>
             </div>
 
-            {/* Right controls — never shrink below content */}
+            {/* Right controls */}
             <div style={{
               display: "flex", alignItems: "center",
-              gap: "6px", flexShrink: 0,
+              gap: "8px", flexShrink: 0,
             }}>
-              {isRecording && (
-                <VoiceWaveform isActive={isRecording} />
-              )}
-
-              {/* Language selector — compact on mobile */}
-              <LanguageSelector
-                selected={language}
-                onChange={handleLanguageChange}
-              />
-
-              {/* Status dot */}
+              {isRecording && <VoiceWaveform isActive={isRecording} />}
+              <LanguageSelector selected={language} onChange={handleLanguageChange} />
               <motion.div
-                animate={{ opacity: [1, 0.3, 1] }}
+                animate={{ opacity: [1, 0.35, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 style={{
-                  width: "6px", height: "6px",
+                  width: "7px", height: "7px",
                   borderRadius: "50%",
                   background: dotColor,
                   flexShrink: 0,
@@ -253,14 +241,13 @@ export default function ChatPage() {
         {/* ── WAKE UP BANNER ── */}
         {!sessionId && status !== "OFFLINE" && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             style={{
-              padding: "8px 16px",
-              background: "rgba(255,209,102,0.06)",
-              borderBottom: "1px solid rgba(255,209,102,0.12)",
-              fontFamily: "'JetBrains Mono'",
-              fontSize: "9px", color: "#ffd166",
+              padding: "7px 16px",
+              background: "rgba(176,125,42,0.07)",
+              borderBottom: "1px solid rgba(176,125,42,0.18)",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px", color: "#B07D2A",
               letterSpacing: "0.5px",
               textAlign: "center", flexShrink: 0,
             }}
@@ -272,14 +259,13 @@ export default function ChatPage() {
         {/* ── OFFLINE BANNER ── */}
         {status === "OFFLINE" && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             style={{
-              padding: "8px 16px",
-              background: "rgba(255,107,107,0.06)",
-              borderBottom: "1px solid rgba(255,107,107,0.12)",
-              fontFamily: "'JetBrains Mono'",
-              fontSize: "9px", color: "#ff6b6b",
+              padding: "7px 16px",
+              background: "rgba(155,28,28,0.06)",
+              borderBottom: "1px solid rgba(155,28,28,0.15)",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px", color: "#9B1C1C",
               textAlign: "center", flexShrink: 0,
             }}
           >
@@ -291,7 +277,8 @@ export default function ChatPage() {
         <div style={{
           flex: 1, overflowY: "auto",
           padding: "16px 0",
-          WebkitOverflowScrolling: "touch",  /* smooth scroll on iOS */
+          WebkitOverflowScrolling: "touch",
+          background: "#FAFAF7",
         }}>
           {messages.map((msg) => (
             <MessageBubble key={msg.id} message={msg} />
@@ -308,9 +295,9 @@ export default function ChatPage() {
           style={{
             display: "flex", alignItems: "center",
             justifyContent: "space-between",
-            padding: "7px 14px",
-            borderTop: "1px solid #0e2530",
-            background: "#0c1a1f",
+            padding: "8px 14px",
+            borderTop: "1px solid #DDD4C4",
+            background: "#F2EDE6",
             flexShrink: 0, gap: "8px",
             flexWrap: "wrap",
           }}
@@ -330,22 +317,17 @@ export default function ChatPage() {
           animate={{ opacity: 1, y: 0 }}
           style={{
             padding: "12px 14px",
-            borderTop: "1px solid #0e2530",
-            background: "#0c1a1f",
+            borderTop: "1px solid #DDD4C4",
+            background: "#F2EDE6",
             display: "flex", gap: "8px",
             alignItems: "center", flexShrink: 0,
           }}
         >
           <VoiceButton
-            onTranscript={(text) => {
-              setInput(text);
-              setIsRecording(false);
-            }}
+            onTranscript={(text) => { setInput(text); setIsRecording(false); }}
             onRecordingChange={setIsRecording}
             disabled={isLoading || !sessionId}
-            language={
-              LANGUAGES.find((l) => l.code === language)?.speechCode || "en-IN"
-            }
+            language={LANGUAGES.find((l) => l.code === language)?.speechCode || "en-IN"}
           />
 
           <input
@@ -353,25 +335,25 @@ export default function ChatPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend(input)}
             placeholder={
-              !sessionId
-                ? "Waiting for server..."
-                : language === "hi" ? "अपने लक्षण बताएं..."
-                : language === "as" ? "আপোনাৰ লক্ষণ কওক..."
-                : "Describe your symptoms..."
+              !sessionId          ? "Waiting for server..."
+              : language === "hi" ? "अपने लक्षण बताएं..."
+              : language === "as" ? "আপোনাৰ লক্ষণ কওক..."
+              : "Describe your symptoms..."
             }
             disabled={isLoading || !sessionId}
             style={{
               flex: 1, minWidth: 0,
-              background: "rgba(0,201,167,0.04)",
-              border: "1px solid #0e2530",
-              borderRadius: "22px", padding: "11px 15px",
-              color: "#dde8f0", fontFamily: "'Outfit'",
+              background: "#FAFAF7",
+              border: "1.5px solid #DDD4C4",
+              borderRadius: "24px", padding: "11px 16px",
+              color: "#1C1208",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: "14px", outline: "none",
               transition: "border-color 0.2s",
               opacity: !sessionId ? 0.5 : 1,
             }}
-            onFocus={(e) => e.target.style.borderColor = "rgba(0,201,167,0.4)"}
-            onBlur={(e)  => e.target.style.borderColor = "#0e2530"}
+            onFocus={(e) => e.target.style.borderColor = "#E07B39"}
+            onBlur={(e)  => e.target.style.borderColor = "#DDD4C4"}
           />
 
           <motion.button
@@ -382,16 +364,17 @@ export default function ChatPage() {
               width: "42px", height: "42px",
               borderRadius: "50%", flexShrink: 0,
               background: input.trim() && !isLoading && sessionId
-                ? "#00c9a7"
-                : "rgba(0,201,167,0.08)",
+                ? "#E07B39" : "#EAE2D8",
               border: "none",
               color: input.trim() && !isLoading && sessionId
-                ? "#070d0f" : "#1e4050",
+                ? "#FAFAF7" : "#9A8472",
               display: "flex", alignItems: "center",
               justifyContent: "center",
               cursor: input.trim() && !isLoading && sessionId
                 ? "pointer" : "not-allowed",
               transition: "all 0.2s",
+              boxShadow: input.trim() && !isLoading && sessionId
+                ? "0 2px 12px rgba(224,123,57,0.3)" : "none",
             }}
           >
             <Send size={17} />
