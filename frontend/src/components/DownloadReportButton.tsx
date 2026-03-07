@@ -16,7 +16,6 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
   const downloadPDF = async () => {
     setLoading(true);
     try {
-      // Extract data from conversation
       const botMessages  = messages.filter((m) => m.role === "bot" && !m.isTyping);
       const userMessages = messages.filter((m) => m.role === "user");
       const lastBot      = botMessages[botMessages.length - 1];
@@ -25,7 +24,6 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
         .filter(Boolean)
         .pop();
 
-      // Fetch relevant medicines
       let medicines = [];
       if (lastEntities?.symptoms?.length) {
         const res = await fetch(
@@ -35,7 +33,6 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
         medicines = data.medicines || [];
       }
 
-      // Generate PDF
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/report/pdf`,
         {
@@ -55,7 +52,6 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
 
       if (!res.ok) throw new Error("PDF generation failed");
 
-      // Download the PDF
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement("a");
@@ -72,7 +68,6 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
     }
   };
 
-  // Only show after at least one AI response
   const hasBotResponse = messages.some((m) => m.role === "bot" && !m.isTyping && m.id !== "welcome");
   if (!hasBotResponse) return null;
 
@@ -84,23 +79,23 @@ export default function DownloadReportButton({ messages, sessionId, language }: 
       onClick={downloadPDF}
       disabled={loading}
       style={{
-        display: "flex", alignItems: "center", gap: "8px",
-        background: "rgba(59,158,255,0.08)",
-        border: "1px solid rgba(59,158,255,0.25)",
-        borderRadius: "8px", padding: "8px 16px",
+        display: "flex", alignItems: "center", gap: "7px",
+        background: "rgba(92,45,110,0.07)",
+        border: "1px solid rgba(92,45,110,0.20)",
+        borderRadius: "8px", padding: "7px 14px",
         cursor: loading ? "wait" : "pointer",
         transition: "all 0.2s",
       }}
     >
       {loading
         ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-            <Loader2 size={14} color="#3b9eff" />
+            <Loader2 size={14} color="#5C2D6E" />
           </motion.div>
-        : <FileDown size={14} color="#3b9eff" />
+        : <FileDown size={14} color="#5C2D6E" />
       }
       <span style={{
-        fontFamily: "'JetBrains Mono'", fontSize: "10px",
-        color: "#3b9eff", letterSpacing: "1px",
+        fontFamily: "'JetBrains Mono', monospace", fontSize: "10px",
+        color: "#5C2D6E", letterSpacing: "0.8px",
       }}>
         {loading ? "GENERATING..." : "DOWNLOAD REPORT"}
       </span>
