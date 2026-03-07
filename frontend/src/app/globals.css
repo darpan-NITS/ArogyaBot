@@ -5,14 +5,20 @@
 }
 
 :root {
-  --bg-primary:    #070d0f;
-  --bg-secondary:  #0c1a1f;
-  --accent-teal:   #00c9a7;
-  --accent-red:    #ff6b6b;
-  --accent-yellow: #ffd166;
-  --text-primary:  #dde8f0;
-  --text-secondary:#4a7a8a;
-  --border:        #0e2530;
+  --bg-primary:   #FAFAF7;
+  --bg-surface:   #F2EDE6;
+  --bg-surface2:  #EAE2D8;
+  --accent:       #E07B39;
+  --accent-hover: #C96828;
+  --plum:         #5C2D6E;
+  --text-primary: #1C1208;
+  --text-body:    #4A3728;
+  --text-muted:   #9A8472;
+  --border:       #DDD4C4;
+  --border-soft:  #EAE2D8;
+  --green:        #2D7A4F;
+  --amber:        #B07D2A;
+  --red:          #9B1C1C;
 }
 
 html, body {
@@ -24,46 +30,40 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #0e2530; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #1a3a4a; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* Selection */
 ::selection {
-  background: rgba(0, 201, 167, 0.2);
-  color: #dde8f0;
+  background: rgba(224,123,57,0.18);
+  color: var(--text-primary);
 }
 
-/* Leaflet */
+/* Leaflet — warm toned */
 .leaflet-container {
-  background: #0a1520 !important;
-  font-family: 'Outfit', sans-serif !important;
+  background: #F2EDE6 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 .leaflet-tile {
-  filter: brightness(0.85) saturate(0.8);
+  filter: brightness(1.0) saturate(0.85) sepia(0.08);
 }
 .leaflet-popup-content-wrapper {
-  background: #0c1a1f !important;
-  border: 1px solid #0e2530 !important;
-  color: #dde8f0 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  background: #FAFAF7 !important;
+  border: 1px solid #DDD4C4 !important;
+  color: #1C1208 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(92,45,110,0.10) !important;
 }
-.leaflet-popup-tip {
-  background: #0c1a1f !important;
-}
+.leaflet-popup-tip { background: #FAFAF7 !important; }
 .leaflet-control-zoom a {
-  background: #0c1a1f !important;
-  border-color: #0e2530 !important;
-  color: #00c9a7 !important;
+  background: #FAFAF7 !important;
+  border-color: #DDD4C4 !important;
+  color: #E07B39 !important;
 }
 
-/* Mobile tap highlight */
 * { -webkit-tap-highlight-color: transparent; }
 
-/* PWA safe areas */
 @supports (padding: max(0px)) {
   body {
     padding-top:    env(safe-area-inset-top);
