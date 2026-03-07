@@ -44,7 +44,7 @@ function LanguageTicker() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.25 }}
-        style={{ color: "#00c9a7", fontStyle: "italic" }}
+        style={{ color: "#3db8ae", fontStyle: "italic" }}
       >
         {LANGUAGES[i]}
       </motion.span>
@@ -58,7 +58,7 @@ function HeartbeatLine() {
       <motion.polyline
         points="0,20 40,20 55,5 65,35 75,20 90,20 105,20 115,8 125,32 135,20 160,20 300,20"
         fill="none"
-        stroke="#00c9a7"
+        stroke="#3db8ae"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -74,8 +74,8 @@ function StatCard({ value, label, delay }: { value: string; label: string; delay
   return (
     <RevealCard delay={delay} style={{ height: "100%" }}>
       <div style={{
-        background: "#0c1a1f",
-        border: "1px solid #0e2530",
+        background: "#100d1e",
+        border: "1px solid #1c1730",
         borderRadius: "20px",
         padding: "28px 24px",
         height: "100%",
@@ -86,17 +86,17 @@ function StatCard({ value, label, delay }: { value: string; label: string; delay
         <div style={{
           position: "absolute", top: 0, left: 0,
           width: "100%", height: "2px",
-          background: "linear-gradient(90deg, transparent, #00c9a7, transparent)",
+          background: "linear-gradient(90deg, transparent, #3db8ae, transparent)",
         }} />
         <div style={{
           fontFamily: "'DM Serif Display'",
-          fontSize: "42px", color: "#00c9a7", lineHeight: 1,
+          fontSize: "42px", color: "#3db8ae", lineHeight: 1,
         }}>
           {value}
         </div>
         <div style={{
           fontFamily: "'JetBrains Mono'",
-          fontSize: "10px", color: "#1e6050",
+          fontSize: "10px", color: "#3a2e60",
           letterSpacing: "1.5px", marginTop: "8px",
         }}>
           {label.toUpperCase()}
@@ -118,10 +118,10 @@ function FeatureCard({
       <motion.div
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-        animate={{ borderColor: hovered ? "rgba(0,201,167,0.3)" : "#0e2530" }}
+        animate={{ borderColor: hovered ? "rgba(61,184,174,0.3)" : "#1c1730" }}
         style={{
-          background: accent ? "rgba(0,201,167,0.05)" : "#0c1a1f",
-          border: "1px solid #0e2530",
+          background: accent ? "rgba(61,184,174,0.05)" : "#100d1e",
+          border: "1px solid #1c1730",
           borderRadius: "20px", padding: "28px",
           height: "100%", cursor: "default",
           display: "flex", flexDirection: "column", gap: "14px",
@@ -132,8 +132,8 @@ function FeatureCard({
           style={{
             width: "48px", height: "48px",
             borderRadius: "12px",
-            background: "rgba(0,201,167,0.08)",
-            border: "1px solid rgba(0,201,167,0.15)",
+            background: "rgba(61,184,174,0.08)",
+            border: "1px solid rgba(61,184,174,0.18)",
             display: "flex", alignItems: "center",
             justifyContent: "center", fontSize: "22px",
           }}
@@ -143,13 +143,13 @@ function FeatureCard({
         <div>
           <div style={{
             fontFamily: "'Outfit'", fontSize: "16px",
-            fontWeight: 600, color: "#dde8f0", marginBottom: "6px",
+            fontWeight: 600, color: "#e8e0f4", marginBottom: "6px",
           }}>
             {title}
           </div>
           <div style={{
             fontFamily: "'Outfit'", fontSize: "13px",
-            color: "#4a7a8a", lineHeight: 1.6,
+            color: "#6b5f84", lineHeight: 1.6,
           }}>
             {desc}
           </div>
@@ -208,8 +208,8 @@ export default function LandingPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#070d0f",
-      color: "#dde8f0",
+      background: "#090614",
+      color: "#e8e0f4",
       fontFamily: "'Outfit', sans-serif",
       overflowX: "hidden",
     }}>
@@ -217,19 +217,27 @@ export default function LandingPage() {
       <div style={{
         position: "fixed", inset: 0, zIndex: 0,
         backgroundImage: `
-          linear-gradient(rgba(0,201,167,0.025) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0,201,167,0.025) 1px, transparent 1px)
+          linear-gradient(rgba(61,184,174,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(61,184,174,0.025) 1px, transparent 1px)
         `,
         backgroundSize: "48px 48px",
         pointerEvents: "none",
       }} />
 
-      {/* Top glow */}
+      {/* Top glow — violet */}
       <div style={{
         position: "fixed", top: "-300px", left: "50%",
         transform: "translateX(-50%)",
         width: "700px", height: "700px",
-        background: "radial-gradient(circle, rgba(0,201,167,0.07) 0%, transparent 65%)",
+        background: "radial-gradient(circle, rgba(120,60,200,0.1) 0%, transparent 65%)",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+
+      {/* Subtle bottom-left crimson glow */}
+      <div style={{
+        position: "fixed", bottom: "-200px", left: "-100px",
+        width: "500px", height: "500px",
+        background: "radial-gradient(circle, rgba(192,41,58,0.06) 0%, transparent 65%)",
         pointerEvents: "none", zIndex: 0,
       }} />
 
@@ -254,8 +262,8 @@ export default function LandingPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{
               width: "36px", height: "36px", borderRadius: "10px",
-              background: "rgba(0,201,167,0.1)",
-              border: "1px solid rgba(0,201,167,0.25)",
+              background: "rgba(61,184,174,0.1)",
+              border: "1px solid rgba(61,184,174,0.25)",
               display: "flex", alignItems: "center",
               justifyContent: "center", fontSize: "18px",
             }}>
@@ -263,9 +271,9 @@ export default function LandingPage() {
             </div>
             <span style={{
               fontFamily: "'DM Serif Display'",
-              fontSize: "20px", color: "#dde8f0",
+              fontSize: "20px", color: "#e8e0f4",
             }}>
-              Arogya<span style={{ color: "#00c9a7", fontStyle: "italic" }}>Bot</span>
+              Arogya<span style={{ color: "#3db8ae", fontStyle: "italic" }}>Bot</span>
             </span>
           </div>
           <motion.button
@@ -273,12 +281,12 @@ export default function LandingPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => router.push("/chat")}
             style={{
-              background: "#00c9a7", border: "none",
+              background: "#3db8ae", border: "none",
               borderRadius: "10px", padding: "10px 22px",
               cursor: "pointer",
               fontFamily: "'JetBrains Mono'",
               fontSize: "11px", letterSpacing: "1px",
-              color: "#070d0f", fontWeight: 700,
+              color: "#090614", fontWeight: 700,
             }}
           >
             OPEN APP →
@@ -288,23 +296,31 @@ export default function LandingPage() {
         {/* CARD 1 — HERO */}
         <RevealCard delay={0} style={{ marginBottom: "16px" }}>
           <div style={{
-            background: "#0c1a1f",
-            border: "1px solid #0e2530",
+            background: "#100d1e",
+            border: "1px solid #1c1730",
             borderRadius: "24px",
             padding: "clamp(40px, 6vw, 72px)",
             position: "relative", overflow: "hidden",
           }}>
+            {/* Violet corner glow */}
             <div style={{
               position: "absolute", top: 0, right: 0,
-              width: "300px", height: "300px",
-              background: "radial-gradient(circle at top right, rgba(0,201,167,0.07), transparent 70%)",
+              width: "320px", height: "320px",
+              background: "radial-gradient(circle at top right, rgba(120,60,200,0.1), transparent 70%)",
+              pointerEvents: "none",
+            }} />
+            {/* Teal bottom-left glow */}
+            <div style={{
+              position: "absolute", bottom: 0, left: 0,
+              width: "260px", height: "260px",
+              background: "radial-gradient(circle at bottom left, rgba(61,184,174,0.07), transparent 70%)",
               pointerEvents: "none",
             }} />
 
             <div style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(0,201,167,0.06)",
-              border: "1px solid rgba(0,201,167,0.15)",
+              background: "rgba(61,184,174,0.07)",
+              border: "1px solid rgba(61,184,174,0.18)",
               borderRadius: "20px", padding: "6px 14px",
               marginBottom: "32px",
             }}>
@@ -313,12 +329,12 @@ export default function LandingPage() {
                 transition={{ duration: 1.5, repeat: Infinity }}
                 style={{
                   width: "6px", height: "6px",
-                  borderRadius: "50%", background: "#00c9a7",
+                  borderRadius: "50%", background: "#3db8ae",
                 }}
               />
               <span style={{
                 fontFamily: "'JetBrains Mono'",
-                fontSize: "10px", color: "#00c9a7", letterSpacing: "1.5px",
+                fontSize: "10px", color: "#3db8ae", letterSpacing: "1.5px",
               }}>
                 LIVE · FREE · EASY TO USE
               </span>
@@ -328,7 +344,7 @@ export default function LandingPage() {
               fontFamily: "'DM Serif Display'",
               fontSize: "clamp(32px, 6vw, 64px)",
               fontWeight: 400, lineHeight: 1.1,
-              color: "#dde8f0", marginBottom: "16px",
+              color: "#e8e0f4", marginBottom: "16px",
               letterSpacing: "-1px",
             }}>
               Healthcare guidance
@@ -344,7 +360,7 @@ export default function LandingPage() {
             </div>
 
             <p style={{
-              fontSize: "16px", color: "#4a7a8a",
+              fontSize: "16px", color: "#8a7aaa",
               maxWidth: "500px", lineHeight: 1.7,
               marginBottom: "40px",
             }}>
@@ -355,17 +371,17 @@ export default function LandingPage() {
 
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
               <motion.button
-                whileHover={{ scale: 1.03, boxShadow: "0 0 50px rgba(0,201,167,0.25)" }}
+                whileHover={{ scale: 1.03, boxShadow: "0 0 50px rgba(61,184,174,0.25)" }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => router.push("/chat")}
                 style={{
-                  background: "#00c9a7", border: "none",
+                  background: "#3db8ae", border: "none",
                   borderRadius: "12px", padding: "14px 36px",
                   cursor: "pointer",
                   fontFamily: "'JetBrains Mono'",
                   fontSize: "12px", letterSpacing: "1.5px",
-                  color: "#070d0f", fontWeight: 700,
-                  boxShadow: "0 0 30px rgba(0,201,167,0.15)",
+                  color: "#090614", fontWeight: 700,
+                  boxShadow: "0 0 30px rgba(61,184,174,0.15)",
                 }}
               >
                 START CHAT →
@@ -376,12 +392,12 @@ export default function LandingPage() {
                 onClick={() => window.open("https://github.com/darpan-NITS/ArogyaBot", "_blank")}
                 style={{
                   background: "transparent",
-                  border: "1px solid #0e2530",
+                  border: "1px solid #1c1730",
                   borderRadius: "12px", padding: "14px 36px",
                   cursor: "pointer",
                   fontFamily: "'JetBrains Mono'",
                   fontSize: "12px", letterSpacing: "1.5px",
-                  color: "#4a7a8a",
+                  color: "#6b5f84",
                 }}
               >
                 GITHUB REPO ↗
@@ -405,13 +421,13 @@ export default function LandingPage() {
         {/* CARD 3 — HOW IT WORKS */}
         <RevealCard delay={0.05} style={{ marginBottom: "16px" }}>
           <div style={{
-            background: "#0c1a1f",
-            border: "1px solid #0e2530",
+            background: "#100d1e",
+            border: "1px solid #1c1730",
             borderRadius: "24px", padding: "40px",
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
-              fontSize: "10px", color: "#1e6050",
+              fontSize: "10px", color: "#3a2e60",
               letterSpacing: "2px", marginBottom: "32px",
             }}>
               HOW IT WORKS
@@ -425,12 +441,12 @@ export default function LandingPage() {
                   key={i}
                   style={{
                     padding: "24px",
-                    borderRight: i < STEPS.length - 1 ? "1px solid #0e2530" : "none",
+                    borderRight: i < STEPS.length - 1 ? "1px solid #1c1730" : "none",
                   }}
                 >
                   <div style={{
                     fontFamily: "'JetBrains Mono'",
-                    fontSize: "10px", color: "#1e3a4a",
+                    fontSize: "10px", color: "#2a2248",
                     letterSpacing: "1px", marginBottom: "12px",
                   }}>
                     {s.step}
@@ -438,13 +454,13 @@ export default function LandingPage() {
                   <div style={{ fontSize: "24px", marginBottom: "10px" }}>{s.icon}</div>
                   <div style={{
                     fontFamily: "'Outfit'", fontSize: "15px",
-                    fontWeight: 600, color: "#dde8f0", marginBottom: "6px",
+                    fontWeight: 600, color: "#e8e0f4", marginBottom: "6px",
                   }}>
                     {s.title}
                   </div>
                   <div style={{
                     fontFamily: "'Outfit'", fontSize: "12px",
-                    color: "#4a7a8a", lineHeight: 1.6,
+                    color: "#6b5f84", lineHeight: 1.6,
                   }}>
                     {s.desc}
                   </div>
@@ -475,14 +491,14 @@ export default function LandingPage() {
         {/* CARD 5 — LANGUAGES */}
         <RevealCard delay={0.05} style={{ marginBottom: "16px" }}>
           <div style={{
-            background: "#0c1a1f",
-            border: "1px solid #0e2530",
+            background: "#100d1e",
+            border: "1px solid #1c1730",
             borderRadius: "24px", padding: "40px",
             textAlign: "center",
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
-              fontSize: "10px", color: "#1e6050",
+              fontSize: "10px", color: "#3a2e60",
               letterSpacing: "2px", marginBottom: "28px",
             }}>
               VARIOUS SUPPORTED LANGUAGES
@@ -494,23 +510,23 @@ export default function LandingPage() {
               {LANG_LIST.map((lang, i) => (
                 <motion.div
                   key={i}
-                  whileHover={{ scale: 1.05, borderColor: "rgba(0,201,167,0.4)" }}
+                  whileHover={{ scale: 1.05, borderColor: "rgba(61,184,174,0.4)" }}
                   style={{
-                    background: "rgba(0,201,167,0.04)",
-                    border: "1px solid rgba(0,201,167,0.1)",
+                    background: "rgba(61,184,174,0.04)",
+                    border: "1px solid rgba(61,184,174,0.1)",
                     borderRadius: "10px", padding: "10px 18px",
                     cursor: "default",
                   }}
                 >
                   <div style={{
                     fontFamily: "'Outfit'", fontSize: "16px",
-                    color: "#dde8f0", marginBottom: "2px",
+                    color: "#e8e0f4", marginBottom: "2px",
                   }}>
                     {lang.name}
                   </div>
                   <div style={{
                     fontFamily: "'JetBrains Mono'",
-                    fontSize: "9px", color: "#1e6050", letterSpacing: "1px",
+                    fontSize: "9px", color: "#3a2e60", letterSpacing: "1px",
                   }}>
                     {lang.script.toUpperCase()}
                   </div>
@@ -528,8 +544,8 @@ export default function LandingPage() {
         }}>
           <RevealCard delay={0.05} style={{ height: "100%" }}>
             <div style={{
-              background: "rgba(255,107,107,0.04)",
-              border: "1px solid rgba(255,107,107,0.15)",
+              background: "rgba(192,41,58,0.05)",
+              border: "1px solid rgba(192,41,58,0.18)",
               borderRadius: "24px", padding: "32px",
               height: "100%",
               display: "flex", flexDirection: "column",
@@ -539,13 +555,13 @@ export default function LandingPage() {
               <div>
                 <div style={{
                   fontFamily: "'DM Serif Display'",
-                  fontSize: "48px", color: "#ff6b6b", lineHeight: 1,
+                  fontSize: "48px", color: "#d94058", lineHeight: 1,
                 }}>
                   108
                 </div>
                 <div style={{
                   fontFamily: "'JetBrains Mono'",
-                  fontSize: "10px", color: "rgba(255,107,107,0.5)",
+                  fontSize: "10px", color: "rgba(217,64,88,0.55)",
                   letterSpacing: "1.5px", marginTop: "8px",
                 }}>
                   EMERGENCY HELPLINE
@@ -553,7 +569,7 @@ export default function LandingPage() {
               </div>
               <p style={{
                 fontFamily: "'Outfit'", fontSize: "12px",
-                color: "rgba(255,107,107,0.5)", lineHeight: 1.6,
+                color: "rgba(217,64,88,0.55)", lineHeight: 1.6,
               }}>
                 Always call 108 in a medical emergency. ArogyaBot is not a substitute for emergency care.
               </p>
@@ -562,8 +578,8 @@ export default function LandingPage() {
 
           <RevealCard delay={0.1} style={{ height: "100%" }}>
             <div style={{
-              background: "rgba(0,201,167,0.04)",
-              border: "1px solid rgba(0,201,167,0.15)",
+              background: "rgba(61,184,174,0.04)",
+              border: "1px solid rgba(61,184,174,0.15)",
               borderRadius: "24px", padding: "40px",
               height: "100%",
               display: "flex", flexDirection: "column",
@@ -573,41 +589,41 @@ export default function LandingPage() {
               <div style={{
                 position: "absolute", bottom: "-60px", right: "-60px",
                 width: "200px", height: "200px",
-                background: "radial-gradient(circle, rgba(0,201,167,0.08), transparent 70%)",
+                background: "radial-gradient(circle, rgba(61,184,174,0.08), transparent 70%)",
                 pointerEvents: "none",
               }} />
               <div>
                 <div style={{
                   fontFamily: "'DM Serif Display'",
                   fontSize: "clamp(22px, 3vw, 32px)",
-                  color: "#dde8f0", lineHeight: 1.2, marginBottom: "16px",
+                  color: "#e8e0f4", lineHeight: 1.2, marginBottom: "16px",
                 }}>
                   Describe your symptoms.
                   <br />
-                  <span style={{ color: "#00c9a7", fontStyle: "italic" }}>
+                  <span style={{ color: "#3db8ae", fontStyle: "italic" }}>
                     Get help instantly.
                   </span>
                 </div>
                 <p style={{
                   fontFamily: "'Outfit'", fontSize: "14px",
-                  color: "#4a7a8a", lineHeight: 1.7,
+                  color: "#6b5f84", lineHeight: 1.7,
                 }}>
                   No registration. No cost. Works offline.
                   Built for rural India, usable by everyone.
                 </p>
               </div>
               <motion.button
-                whileHover={{ scale: 1.03, boxShadow: "0 0 50px rgba(0,201,167,0.2)" }}
+                whileHover={{ scale: 1.03, boxShadow: "0 0 50px rgba(61,184,174,0.2)" }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => router.push("/chat")}
                 style={{
-                  background: "#00c9a7", border: "none",
+                  background: "#3db8ae", border: "none",
                   borderRadius: "12px", padding: "16px 40px",
                   cursor: "pointer", alignSelf: "flex-start",
                   marginTop: "32px",
                   fontFamily: "'JetBrains Mono'",
                   fontSize: "12px", letterSpacing: "1.5px",
-                  color: "#070d0f", fontWeight: 700,
+                  color: "#090614", fontWeight: 700,
                 }}
               >
                 START YOUR 1st CHAT →
@@ -619,7 +635,7 @@ export default function LandingPage() {
         {/* FOOTER */}
         <RevealCard delay={0.05}>
           <div style={{
-            borderTop: "1px solid #0e2530",
+            borderTop: "1px solid #1c1730",
             padding: "24px 0",
             display: "flex", alignItems: "center",
             justifyContent: "space-between",
@@ -627,23 +643,23 @@ export default function LandingPage() {
           }}>
             <span style={{
               fontFamily: "'DM Serif Display'",
-              fontSize: "16px", color: "#1e4050",
+              fontSize: "16px", color: "#2a2248",
             }}>
-              Arogya<span style={{ color: "#1e6050", fontStyle: "italic" }}>Bot</span>
+              Arogya<span style={{ color: "#3a2e60", fontStyle: "italic" }}>Bot</span>
             </span>
             <span style={{
               fontFamily: "'JetBrains Mono'",
-              fontSize: "9px", color: "#1e3a4a", letterSpacing: "1.5px",
+              fontSize: "9px", color: "#2a2248", letterSpacing: "1.5px",
             }}>
               NOT A SUBSTITUTE FOR MEDICAL ADVICE · BUILT FOR INDIA , BY DARPAN
             </span>
             <motion.button
-              whileHover={{ color: "#00c9a7" }}
+              whileHover={{ color: "#3db8ae" }}
               onClick={() => router.push("/chat")}
               style={{
                 background: "none", border: "none",
                 fontFamily: "'JetBrains Mono'",
-                fontSize: "10px", color: "#1e4050",
+                fontSize: "10px", color: "#2a2248",
                 cursor: "pointer", letterSpacing: "1px",
                 transition: "color 0.2s",
               }}
