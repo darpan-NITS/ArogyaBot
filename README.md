@@ -2,7 +2,7 @@
 
 **Multilingual AI Health Triage Assistant for India**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-arogya-bot-lac.vercel.app-E07B39?style=flat-square)](https://arogya-bot-lac.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-arogya--bot--lac.vercel.app-E07B39?style=flat-square)](https://arogya-bot-lac.vercel.app/)
 [![Backend](https://img.shields.io/badge/Backend-prancare--ai.onrender.com-5C2D6E?style=flat-square)](https://prancare-ai.onrender.com)
 [![License](https://img.shields.io/badge/License-MIT-2D7A4F?style=flat-square)](LICENSE)
 
