@@ -209,9 +209,19 @@ export default function LandingPage() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // RESTORED SCROLL FIX
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
   }, []);
 
   if (!mounted) return null;
@@ -223,15 +233,17 @@ export default function LandingPage() {
         background: "#090614",
         color: "#e8e0f4",
         fontFamily: "'Outfit', sans-serif",
-        overflowX: "hidden",
-        cursor: "none", // Hide default cursor for SplashCursor
+        overflowX: "hidden", // Changed to safe horizontal clamping
+        overflowY: "auto",   // Explicitly allow vertical scrolling
+        cursor: "none",
+        position: "relative"
       }}
     >
       <SplashCursor />
       <LightPillars />
 
-      {/* SVG Filters for Gooey Effect */}
-      <svg width="0" height="0" style={{ position: "absolute" }}>
+      {/* SVG Filters for Gooey Effect - Made pointer-events-none so it doesn't block clicks/scrolls */}
+      <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
         <defs>
           <filter id="gooey">
             <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
@@ -248,6 +260,7 @@ export default function LandingPage() {
         style={{
           position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
           display: "flex", justifyContent: "center", padding: "16px",
+          pointerEvents: "none", // Prevent full wrapper from blocking scrolls
           transition: "all 0.3s ease",
         }}
       >
@@ -256,6 +269,7 @@ export default function LandingPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           style={{
+            pointerEvents: "auto", // Re-enable clicks only on the actual nav bar
             display: "flex", alignItems: "center", justifyContent: "space-between",
             width: "100%", maxWidth: "1000px",
             padding: "12px 24px",
@@ -264,7 +278,7 @@ export default function LandingPage() {
             backdropFilter: scrolled ? "blur(16px)" : "none",
             border: scrolled ? "1px solid rgba(61,184,174,0.15)" : "1px solid transparent",
             boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.3)" : "none",
-            filter: "url(#gooey)", // Gooey effect container
+            filter: "url(#gooey)",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
