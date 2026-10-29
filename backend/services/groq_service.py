@@ -64,7 +64,7 @@ async def get_triage_response(
 
         # ── Call Groq ──
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-120b",
             messages=messages,
             max_tokens=300,
             temperature=0.4,
