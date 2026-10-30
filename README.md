@@ -14,6 +14,9 @@ ArogyaBot is a production-deployed, mobile-first Progressive Web App (PWA) that 
 
 The project was built with India's 900M+ underserved population in mind: communities where the nearest qualified doctor can be hours away, where literacy varies, and where healthcare navigation is a daily challenge.
 
+<img width="1919" height="1147" alt="Screenshot 2026-10-30 123320" src="https://github.com/user-attachments/assets/95db39a5-836d-4ecb-901a-3fe8358466c1" />
+
+
 ---
 
 ## Live Demo
@@ -30,8 +33,14 @@ The project was built with India's 900M+ underserved population in mind: communi
 **Multilingual Voice & Text Input**
 Supports English, हिन्दी, অসমীয়া, বাংলা, తెలుగు, தமிழ், मराठी, ಕನ್ನಡ, and ગુજરાતી. Voice input uses the Web Speech API with per-language speech recognition codes so users can speak naturally in their dialect.
 
+<img width="1919" height="1143" alt="Screenshot 2026-10-30 123619" src="https://github.com/user-attachments/assets/ded63ffc-acad-4c64-a5af-ccd9edd566ac" />
+
+
 **AI-Powered Triage**
 Powered by Groq's Llama 3.3-70B-Versatile model, the triage engine classifies severity as Mild, Moderate, Urgent, or Emergency and provides contextual health guidance in the user's chosen language.
+
+<img width="1919" height="1149" alt="Screenshot 2026-10-30 123519" src="https://github.com/user-attachments/assets/d59a6eeb-0aa4-44b5-9462-d721dc92eb3a" />
+
 
 **Custom Medical NER Pipeline**
 A lightweight, custom Named Entity Recognition pipeline extracts structured medical data from free-form text: symptoms, duration, severity cues, body parts, and patient age — without relying on any external NLP APIs.
@@ -42,8 +51,14 @@ After symptoms are identified, ArogyaBot queries its medicine database to sugges
 **Nearby Facility Finder**
 Uses browser geolocation and the OpenStreetMap Overpass API to surface nearby hospitals, clinics, and health centres on an interactive Leaflet.js map.
 
+<img width="1919" height="1151" alt="Screenshot 2026-10-30 123555" src="https://github.com/user-attachments/assets/8bc9d2b2-f46d-41e8-b7ca-b19e3644058d" />
+
+
 **Downloadable PDF Health Report**
 Generates a formatted PDF summary (via fpdf2) containing the session's symptoms, AI assessment, severity level, recommended medicines, and a medical disclaimer — downloadable in one tap.
+
+<img width="795" height="1085" alt="Screenshot 2026-10-30 172617" src="https://github.com/user-attachments/assets/13506b22-5146-42f0-a472-5e8742b48feb" />
+
 
 **Progressive Web App**
 Installable on Android and iOS, with a web app manifest, theme colour, and `100dvh` viewport handling that ensures the layout never gets cropped by mobile browser chrome.
@@ -214,7 +229,7 @@ Open [http://localhost:3000/chat](http://localhost:3000/chat) in your browser.
 | GET | `/api/health` | Health check |
 
 ---
-
+ 
 ## Roadmap
 
 - [ ] Aadhaar-linked patient history
