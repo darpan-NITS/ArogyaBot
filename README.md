@@ -10,7 +10,7 @@
 
 ## What is ArogyaBot?
 
-ArogyaBot is a production-deployed, mobile-first Progressive Web App (PWA) that delivers AI-powered health triage to users in 9 Indian languages. Users describe their symptoms by typing or speaking in their native language; ArogyaBot extracts medical entities from the conversation, generates a structured triage assessment using Llama 3.3-70B, recommends affordable Jan Aushadhi generic medicine alternatives, locates nearby hospitals and clinics on a live map, and lets users download a formatted PDF health report — all without needing to install anything.
+ArogyaBot is a production-deployed, mobile-first Progressive Web App (PWA) that delivers AI-powered health triage to users in 9 Indian languages. Users describe their symptoms by typing or speaking in their native language; ArogyaBot extracts medical entities from the conversation, generates a structured triage assessment using openai/gpt-oss-120b, recommends affordable Jan Aushadhi generic medicine alternatives, locates nearby hospitals and clinics on a live map, and lets users download a formatted PDF health report — all without needing to install anything.
 
 The project was built with India's 900M+ underserved population in mind: communities where the nearest qualified doctor can be hours away, where literacy varies, and where healthcare navigation is a daily challenge.
 
